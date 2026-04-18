@@ -120,7 +120,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
               _menuItem(
                 Icons.yard,
                 'My balcony',
-                () => GoRouter.of(context).go('/play'),
+                () => GoRouter.of(context).go('/'),
               ),
               _menuItem(
                 Icons.calendar_month,
@@ -247,6 +247,6 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
     await Future<void>.delayed(_celebrationDuration);
     if (!mounted) return;
 
-    GoRouter.of(context).go('/play/won', extra: {'score': score});
+    GoRouter.of(context).go('/won', extra: {'score': score});
   }
 }

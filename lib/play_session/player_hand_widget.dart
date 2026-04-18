@@ -74,9 +74,9 @@ class _PlayerHandWidgetState extends State<PlayerHandWidget> {
             setState(() => isHighlighted = false);
           },
           onAcceptWithDetails: (details) {
-            // Remove card from the source area and add back to player hand
+            // Remove plant from the source area and add card back to hand
             if (details.data.sourceArea != null) {
-              details.data.sourceArea!.cards.remove(details.data.card);
+              details.data.sourceArea!.removePlant();
             }
             boardState.player.addCard(details.data.card);
             setState(() => isHighlighted = false);
