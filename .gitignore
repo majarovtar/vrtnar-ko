@@ -1,3 +1,6 @@
 .flutter-plugins-dependencies
 build/
 .dart_tool/
+soil3/.secrets
+backend/.secrets
+soil_readings.json

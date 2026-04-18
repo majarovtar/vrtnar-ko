@@ -13,6 +13,7 @@ import '../style/confetti.dart';
 import '../style/palette.dart';
 import 'board_widget.dart';
 import 'player_hand_widget.dart';
+import 'soil_humidity_alert.dart';
 
 class PlaySessionScreen extends StatefulWidget {
   const PlaySessionScreen({super.key});
@@ -64,6 +65,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                   ),
                 ),
               ),
+              const SoilHumidityAlert(),
             ],
           ),
         ),
