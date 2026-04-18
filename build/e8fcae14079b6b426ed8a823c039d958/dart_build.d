@@ -1,0 +1,1 @@
+ /Users/maja/work/test_zelenjav/zz/build/e8fcae14079b6b426ed8a823c039d958/dart_build_result.json:  /Users/maja/develop/flutter/bin/cache/dart-sdk/version /Users/maja/work/test_zelenjav/zz/.dart_tool/package_config.json /Users/maja/work/test_zelenjav/zz/pubspec.yaml
