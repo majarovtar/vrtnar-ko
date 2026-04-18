@@ -4,35 +4,85 @@ import 'package:provider/provider.dart';
 import '../game_internals/board_state.dart';
 import 'playing_card_widget.dart';
 
-class PlayerHandWidget extends StatelessWidget {
+class PlayerHandWidget extends StatefulWidget {
   const PlayerHandWidget({super.key});
+
+  @override
+  State<PlayerHandWidget> createState() => _PlayerHandWidgetState();
+}
+
+class _PlayerHandWidgetState extends State<PlayerHandWidget> {
+  bool isHighlighted = false;
 
   @override
   Widget build(BuildContext context) {
     final boardState = context.watch<BoardState>();
 
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: PlayingCardWidget.height),
-        child: ListenableBuilder(
-          // Make sure we rebuild every time there's an update
-          // to the player's hand.
-          listenable: boardState.player,
-          builder: (context, child) {
-            return Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 10,
-              runSpacing: 10,
+    return ListenableBuilder(
+      listenable: boardState.player,
+      builder: (context, child) {
+        return DragTarget<PlayingCardDragData>(
+          builder: (context, candidateData, rejectedData) {
+            return ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               children: [
+                if (isHighlighted)
+                  Container(
+                    height: 40,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green, width: 2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text('Drop seed to return'),
+                    ),
+                  ),
                 ...boardState.player.hand.map(
-                  (card) => PlayingCardWidget(card, player: boardState.player),
+                  (card) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        PlayingCardWidget(
+                          card,
+                          player: boardState.player,
+                          compact: true,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            card.seed.name,
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             );
           },
-        ),
-      ),
+          onWillAcceptWithDetails: (details) {
+            // Only accept cards from playing areas, not from the hand
+            if (details.data.sourceArea != null && details.data.holder == null) {
+              setState(() => isHighlighted = true);
+              return true;
+            }
+            return false;
+          },
+          onLeave: (data) {
+            setState(() => isHighlighted = false);
+          },
+          onAcceptWithDetails: (details) {
+            // Remove card from the source area and add back to player hand
+            if (details.data.sourceArea != null) {
+              details.data.sourceArea!.cards.remove(details.data.card);
+            }
+            boardState.player.addCard(details.data.card);
+            setState(() => isHighlighted = false);
+          },
+        );
+      },
     );
   }
 }

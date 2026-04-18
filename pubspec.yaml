@@ -37,9 +37,9 @@ flutter:
     - assets/sfx/
 
   fonts:
-    - family: Permanent Marker
+    - family: Press Start 2P
       fonts:
-        - asset: assets/fonts/Permanent_Marker/PermanentMarker-Regular.ttf
+        - asset: assets/fonts/PressStart2P-Regular.ttf
 
 flutter_launcher_icons:
   android: true

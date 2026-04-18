@@ -1,7 +1,3 @@
-// Copyright 2022, the Flutter project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -14,15 +10,10 @@ import '../audio/sounds.dart';
 import '../game_internals/board_state.dart';
 import '../game_internals/score.dart';
 import '../style/confetti.dart';
-import '../style/my_button.dart';
 import '../style/palette.dart';
 import 'board_widget.dart';
+import 'player_hand_widget.dart';
 
-/// This widget defines the entirety of the screen that the player sees when
-/// they are playing a level.
-///
-/// It is a stateful widget because it manages some state of its own,
-/// such as whether the game is in a "celebration" state.
 class PlaySessionScreen extends StatefulWidget {
   const PlaySessionScreen({super.key});
 
@@ -43,6 +34,9 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
 
   late final BoardState _boardState;
 
+  bool _isMenuOpen = true;
+  bool _isSeedBoxOpen = true;
+
   @override
   Widget build(BuildContext context) {
     final palette = context.watch<Palette>();
@@ -50,43 +44,16 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
     return MultiProvider(
       providers: [Provider.value(value: _boardState)],
       child: IgnorePointer(
-        // Ignore all input during the celebration animation.
         ignoring: _duringCelebration,
         child: Scaffold(
           backgroundColor: palette.backgroundPlaySession,
-          // The stack is how you layer widgets on top of each other.
-          // Here, it is used to overlay the winning confetti animation on top
-          // of the game.
           body: Stack(
             children: [
-              // This is the main layout of the play session screen,
-              // with a settings button at top, the actual play area
-              // in the middle, and a back button at the bottom.
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Row(
                 children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkResponse(
-                      onTap: () => GoRouter.of(context).push('/settings'),
-                      child: Image.asset(
-                        'assets/images/settings.png',
-                        semanticLabel: 'Settings',
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  // The actual UI of the game.
-                  const BoardWidget(),
-                  const Text('Drag cards to the two areas above.'),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: MyButton(
-                      onPressed: () => GoRouter.of(context).go('/'),
-                      child: const Text('Back'),
-                    ),
-                  ),
+                  _buildMenuPanel(palette),
+                  Expanded(child: _buildGarden()),
+                  _buildSeedBox(palette),
                 ],
               ),
               SizedBox.expand(
@@ -99,6 +66,144 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuPanel(Palette palette) {
+    return Container(
+      width: _isMenuOpen ? 220 : 56,
+      decoration: BoxDecoration(
+        color: palette.backgroundMain,
+        border: Border(
+          right: BorderSide(color: palette.ink.withValues(alpha: 0.15)),
+        ),
+      ),
+      child: SafeArea(
+        right: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 56,
+              child: _isMenuOpen
+                  ? Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 16),
+                          child: Text(
+                            'Menu',
+                            style: TextStyle(
+                              fontFamily: 'Permanent Marker',
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left),
+                          onPressed: () =>
+                              setState(() => _isMenuOpen = false),
+                        ),
+                      ],
+                    )
+                  : Center(
+                      child: IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () =>
+                            setState(() => _isMenuOpen = true),
+                      ),
+                    ),
+            ),
+            if (_isMenuOpen) ...[
+              _menuItem(
+                Icons.yard,
+                'My balcony',
+                () => GoRouter.of(context).go('/home'),
+              ),
+              _menuItem(Icons.calendar_month, 'Calendar', null),
+              _menuItem(Icons.location_city, 'City', null),
+              _menuItem(Icons.settings, 'Settings', null),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _menuItem(IconData icon, String label, VoidCallback? onTap) {
+    return ListTile(
+      leading: Icon(icon, size: 20),
+      title: Text(label, style: const TextStyle(fontSize: 14)),
+      onTap: onTap,
+      enabled: onTap != null,
+      dense: true,
+    );
+  }
+
+  Widget _buildGarden() {
+    return SafeArea(
+      left: false,
+      right: false,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Expanded(child: BoardWidget()),
+          const Text('Drag seeds into the garden above.'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSeedBox(Palette palette) {
+    return Container(
+      width: _isSeedBoxOpen ? 180 : 56,
+      decoration: BoxDecoration(
+        color: palette.backgroundLevelSelection,
+        border: Border(
+          left: BorderSide(color: palette.ink.withValues(alpha: 0.15)),
+        ),
+      ),
+      child: SafeArea(
+        left: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 56,
+              child: _isSeedBoxOpen
+                  ? Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 16),
+                          child: Text(
+                            'Seeds',
+                            style: TextStyle(
+                              fontFamily: 'Permanent Marker',
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right),
+                          onPressed: () =>
+                              setState(() => _isSeedBoxOpen = false),
+                        ),
+                      ],
+                    )
+                  : Center(
+                      child: IconButton(
+                        icon: const Icon(Icons.eco),
+                        onPressed: () =>
+                            setState(() => _isSeedBoxOpen = true),
+                      ),
+                    ),
+            ),
+            if (_isSeedBoxOpen)
+              const Expanded(child: PlayerHandWidget()),
+          ],
         ),
       ),
     );
@@ -120,13 +225,8 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
   Future<void> _playerWon() async {
     _log.info('Player won');
 
-    // TODO: replace with some meaningful score for the card game
     final score = Score(1, 1, DateTime.now().difference(_startOfPlay));
 
-    // final playerProgress = context.read<PlayerProgress>();
-    // playerProgress.setLevelReached(widget.level.number);
-
-    // Let the player see the game just after winning for a bit.
     await Future<void>.delayed(_preCelebrationDuration);
     if (!mounted) return;
 
@@ -137,7 +237,6 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
     final audioController = context.read<AudioController>();
     audioController.playSfx(SfxType.congrats);
 
-    /// Give the player some time to see the celebration animation.
     await Future<void>.delayed(_celebrationDuration);
     if (!mounted) return;
 

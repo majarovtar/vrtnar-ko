@@ -80,6 +80,7 @@ class MyApp extends StatelessWidget {
 
             return MaterialApp.router(
               title: 'My Flutter Game',
+              debugShowCheckedModeBanner: false,
               theme:
                   ThemeData.from(
                     colorScheme: ColorScheme.fromSeed(
@@ -87,7 +88,10 @@ class MyApp extends StatelessWidget {
                       surface: palette.backgroundMain,
                     ),
                     textTheme: TextTheme(
-                      bodyMedium: TextStyle(color: palette.ink),
+                      bodyMedium: TextStyle(
+                        color: palette.ink,
+                        fontFamily: 'Press Start 2P',
+                      ),
                     ),
                     useMaterial3: true,
                   ).copyWith(
@@ -95,6 +99,7 @@ class MyApp extends StatelessWidget {
                     filledButtonTheme: FilledButtonThemeData(
                       style: FilledButton.styleFrom(
                         textStyle: const TextStyle(
+                          fontFamily: 'Press Start 2P',
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),

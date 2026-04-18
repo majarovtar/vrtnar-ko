@@ -3,8 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../audio/audio_controller.dart';
-import '../audio/sounds.dart';
 import '../game_internals/playing_area.dart';
 import '../game_internals/playing_card.dart';
 import '../style/palette.dart';
@@ -27,22 +25,21 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
     final palette = context.watch<Palette>();
 
     return LimitedBox(
-      maxHeight: 200,
+      maxHeight: 120,
       child: AspectRatio(
         aspectRatio: 1 / 1,
         child: DragTarget<PlayingCardDragData>(
           builder: (context, candidateData, rejectedData) => Material(
-            color: isHighlighted ? palette.accept : palette.trueWhite,
+            color: isHighlighted
+                ? palette.accept.withValues(alpha: 0.3)
+                : palette.trueWhite.withValues(alpha: 0.15),
             shape: const CircleBorder(),
             clipBehavior: Clip.hardEdge,
             child: InkWell(
               splashColor: palette.redPen,
-              onTap: _onAreaTap,
               child: StreamBuilder(
-                // Rebuild the card stack whenever the area changes
-                // (either by a player action, or remotely).
                 stream: widget.area.allChanges,
-                builder: (context, child) => _CardStack(widget.area.cards),
+                builder: (context, child) => _CardStack(widget.area.cards, widget.area),
               ),
             ),
           ),
@@ -54,16 +51,11 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
     );
   }
 
-  void _onAreaTap() {
-    widget.area.removeFirstCard();
-
-    final audioController = context.read<AudioController>();
-    audioController.playSfx(SfxType.huhsh);
-  }
-
   void _onDragAccept(DragTargetDetails<PlayingCardDragData> details) {
     widget.area.acceptCard(details.data.card);
-    details.data.holder.removeCard(details.data.card);
+    if (details.data.sourceArea != null) {
+      details.data.sourceArea!.cards.remove(details.data.card);
+    }
     setState(() => isHighlighted = false);
   }
 
@@ -72,6 +64,8 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   }
 
   bool _onDragWillAccept(DragTargetDetails<PlayingCardDragData> details) {
+    if (details.data.sourceArea == widget.area) return false;
+    if (widget.area.cards.isNotEmpty) return false;
     setState(() => isHighlighted = true);
     return true;
   }
@@ -80,18 +74,20 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
 class _CardStack extends StatelessWidget {
   static const int _maxCards = 6;
 
-  static const _leftOffset = 10.0;
+  static const _leftOffset = 5.0;
 
-  static const _topOffset = 5.0;
+  static const _topOffset = 3.0;
 
   static const double _maxWidth =
-      _maxCards * _leftOffset + PlayingCardWidget.width;
+      _maxCards * _leftOffset + PlayingCardWidget.compactWidth;
 
-  static const _maxHeight = _maxCards * _topOffset + PlayingCardWidget.height;
+  static const _maxHeight = _maxCards * _topOffset + PlayingCardWidget.compactHeight;
 
   final List<PlayingCard> cards;
 
-  const _CardStack(this.cards);
+  final PlayingArea area;
+
+  const _CardStack(this.cards, this.area);
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +105,11 @@ class _CardStack extends StatelessWidget {
               Positioned(
                 top: i * _topOffset,
                 left: i * _leftOffset,
-                child: PlayingCardWidget(cards[i]),
+                child: PlayingCardWidget(
+                  cards[i],
+                  area: area,
+                  compact: true,
+                ),
               ),
           ],
         ),
@@ -117,3 +117,4 @@ class _CardStack extends StatelessWidget {
     );
   }
 }
+
