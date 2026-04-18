@@ -120,10 +120,14 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
               _menuItem(
                 Icons.yard,
                 'My balcony',
-                () => GoRouter.of(context).go('/home'),
+                () => GoRouter.of(context).go('/play'),
               ),
               _menuItem(Icons.calendar_month, 'Calendar', null),
-              _menuItem(Icons.location_city, 'City', null),
+              _menuItem(
+                Icons.location_city,
+                'City',
+                () => GoRouter.of(context).go('/city'),
+              ),
               _menuItem(Icons.settings, 'Settings', null),
             ],
           ],
