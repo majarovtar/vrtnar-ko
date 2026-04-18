@@ -14,6 +14,9 @@ import 'style/my_transition.dart';
 import 'style/palette.dart';
 import 'win_game/win_game_screen.dart';
 
+import 'city/city_screen.dart';
+import 'shared/placeholder_screen.dart';
+
 /// The router describes the game's navigational hierarchy, from the main
 /// screen through settings screens all the way to each individual level.
 final router = GoRouter(
@@ -63,6 +66,27 @@ final router = GoRouter(
           builder: (context, state) =>
               const SettingsScreen(key: Key('settings')),
         ),
+
+        GoRoute(
+          path: 'city',
+          builder: (context, state) => const CityScreen(key: Key('city')),
+        ),
+        GoRoute(
+          path: 'marketplace',
+          builder: (context, state) =>
+              const PlaceholderScreen(title: 'Marketplace'),
+        ),
+        GoRoute(
+          path: 'cemetery',
+          builder: (context, state) =>
+              const PlaceholderScreen(title: 'Cemetery'),
+        ),
+        GoRoute(
+          path: 'friend-balcony',
+          builder: (context, state) =>
+              const PlaceholderScreen(title: 'Friend Balcony'),
+        ),
+
       ],
     ),
   ],
