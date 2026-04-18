@@ -1,11 +1,11 @@
-import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../game_internals/playing_area.dart';
-import '../game_internals/playing_card.dart';
 import '../style/palette.dart';
+import 'plant_info_dialog.dart';
 import 'playing_card_widget.dart';
 
 class PlayingAreaWidget extends StatefulWidget {
@@ -19,6 +19,27 @@ class PlayingAreaWidget extends StatefulWidget {
 
 class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   bool isHighlighted = false;
+  Timer? _growthTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startGrowthTimer();
+  }
+
+  @override
+  void dispose() {
+    _growthTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startGrowthTimer() {
+    _growthTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (widget.area.plant != null) {
+        setState(() {});
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +58,12 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
             clipBehavior: Clip.hardEdge,
             child: InkWell(
               splashColor: palette.redPen,
+              onTap: widget.area.plant != null
+                  ? () => showPlantInfoDialog(context, widget.area)
+                  : null,
               child: StreamBuilder(
                 stream: widget.area.allChanges,
-                builder: (context, child) => _CardStack(widget.area.cards, widget.area),
+                builder: (context, child) => _buildContent(),
               ),
             ),
           ),
@@ -51,11 +75,22 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
     );
   }
 
+  Widget _buildContent() {
+    final plant = widget.area.plant;
+    if (plant == null) return const SizedBox.shrink();
+
+    return Center(
+      child: Image.asset(
+        plant.assetPath,
+        width: 48,
+        height: 48,
+        filterQuality: FilterQuality.none,
+      ),
+    );
+  }
+
   void _onDragAccept(DragTargetDetails<PlayingCardDragData> details) {
-    widget.area.acceptCard(details.data.card);
-    if (details.data.sourceArea != null) {
-      details.data.sourceArea!.cards.remove(details.data.card);
-    }
+    widget.area.plantSeed(details.data.card.seed);
     setState(() => isHighlighted = false);
   }
 
@@ -65,56 +100,8 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
 
   bool _onDragWillAccept(DragTargetDetails<PlayingCardDragData> details) {
     if (details.data.sourceArea == widget.area) return false;
-    if (widget.area.cards.isNotEmpty) return false;
+    if (widget.area.plant != null) return false;
     setState(() => isHighlighted = true);
     return true;
   }
 }
-
-class _CardStack extends StatelessWidget {
-  static const int _maxCards = 6;
-
-  static const _leftOffset = 5.0;
-
-  static const _topOffset = 3.0;
-
-  static const double _maxWidth =
-      _maxCards * _leftOffset + PlayingCardWidget.compactWidth;
-
-  static const _maxHeight = _maxCards * _topOffset + PlayingCardWidget.compactHeight;
-
-  final List<PlayingCard> cards;
-
-  final PlayingArea area;
-
-  const _CardStack(this.cards, this.area);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: _maxWidth,
-        height: _maxHeight,
-        child: Stack(
-          children: [
-            for (
-              var i = max(0, cards.length - _maxCards);
-              i < cards.length;
-              i++
-            )
-              Positioned(
-                top: i * _topOffset,
-                left: i * _leftOffset,
-                child: PlayingCardWidget(
-                  cards[i],
-                  area: area,
-                  compact: true,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
