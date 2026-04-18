@@ -15,6 +15,7 @@ import 'style/palette.dart';
 import 'win_game/win_game_screen.dart';
 
 import 'city/city_screen.dart';
+import 'calendar/calendar_screen.dart';
 import 'shared/placeholder_screen.dart';
 
 /// The router describes the game's navigational hierarchy, from the main
@@ -67,6 +68,10 @@ final router = GoRouter(
               const SettingsScreen(key: Key('settings')),
         ),
 
+        GoRoute(
+          path: 'calendar',
+          builder: (context, state) => const CalendarScreen(key: Key('calendar')),
+        ),
         GoRoute(
           path: 'city',
           builder: (context, state) => const CityScreen(key: Key('city')),
