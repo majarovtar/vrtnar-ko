@@ -51,7 +51,7 @@ class _CityScreenState extends State<CityScreen> {
                   bottom: 60,
             child: _BuildingButton(
               label: 'Your Building',
-              onTap: () => context.go('/play'),
+              onTap: () => context.go('/'),
             ),
           ),
           Positioned(
@@ -134,7 +134,7 @@ class _CityScreenState extends State<CityScreen> {
               _menuItem(
                 Icons.yard,
                 'My balcony',
-                () => GoRouter.of(context).go('/play'),
+                () => GoRouter.of(context).go('/'),
               ),
               _menuItem(Icons.calendar_month, 'Calendar', null),
               _menuItem(

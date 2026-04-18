@@ -62,7 +62,7 @@ class PerenualService {
   factory PerenualService() => _instance;
   PerenualService._();
 
-  static const _apiKey = 'sk-Orrl69e3b9ac158ed16533';
+  static const _apiKey = 'sk-vCxI69e3c2415dcb116533';
 
   final Map<String, PlantDetails> _cache = {};
 
