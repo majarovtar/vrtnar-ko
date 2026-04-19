@@ -58,6 +58,7 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
     );
 
     return LongPressDraggable<VaseMoveDragData>(
+      delay: const Duration(milliseconds: 150),
       data: VaseMoveDragData(widget.area),
       feedback: Opacity(
         opacity: 0.8,
@@ -96,8 +97,8 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
             top: 0,
             child: Image.asset(
               plant.assetPath,
-              width: 48,
-              height: 48,
+              width: 56,
+              height: 56,
               filterQuality: FilterQuality.none,
             ),
           ),

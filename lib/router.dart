@@ -12,6 +12,7 @@ import 'city/city_windows_screen.dart';
 import 'city/friend_home_screen.dart';
 import 'city/graveyard_screen.dart';
 import 'game_internals/score.dart';
+import 'main_menu/main_menu_screen.dart';
 import 'play_session/play_session_screen.dart';
 import 'settings/settings_screen.dart';
 import 'shared/placeholder_screen.dart';
@@ -25,13 +26,18 @@ final router = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) =>
+          const MainMenuScreen(key: Key('main menu')),
+    ),
+    GoRoute(
+      path: '/home',
+      builder: (context, state) =>
           const PlaySessionScreen(key: Key('play session')),
       routes: [
         GoRoute(
           path: 'won',
           redirect: (context, state) {
             if (state.extra == null) {
-              return '/';
+              return '/home';
             }
             return null;
           },

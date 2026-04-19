@@ -104,7 +104,7 @@ class _FriendHomeScreenState extends State<FriendHomeScreen> {
         title: Text('${widget.friendName}\'s Home'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/city'),
+          onPressed: () => context.go('/home/city'),
         ),
       ),
       body: Center(

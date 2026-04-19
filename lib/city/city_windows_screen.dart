@@ -106,7 +106,7 @@ class _CityWindowsScreenState extends State<CityWindowsScreen> {
         onExit: (_) => _setHovered(null),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
-          onTap: () => context.go('/friend-home/${window.id}'),
+          onTap: () => context.go('/home/friend-home/${window.id}'),
           child: Container(
             color: Colors.transparent,
           ),

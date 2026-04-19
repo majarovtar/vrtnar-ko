@@ -48,15 +48,20 @@ class _CityScreenState extends State<CityScreen> {
     final palette = context.watch<Palette>();
 
     return Scaffold(
-      body: Row(
+      body: Stack(
         children: [
-          _buildMenuPanel(palette),
-          Expanded(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Container(color: const Color(0xFFBFE3FF)),
-                ),
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/citybg.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Row(
+            children: [
+              _buildMenuPanel(palette),
+              Expanded(
+                child: Stack(
+                  children: [
                 Positioned(
                   left: 0,
                   right: 0,
@@ -79,16 +84,16 @@ class _CityScreenState extends State<CityScreen> {
                             label: 'Marketplace',
                             assetName:
                                 'images/buildings/ME_Singles_Shopping_Center_and_Markets_48x48_Market_Medium_3.png',
-                            onTap: () => context.go('/marketplace'),
+                            onTap: () => context.go('/home/marketplace'),
                           ),
                           const SizedBox(width: 60),
                           _DestinationTile(
                             label: 'City',
                             assetName:
                                 'images/buildings/ME_Singles_Generic_Building_48x48_Condo_4_39.png',
-                            onTap: () => context.go('/city'),
+                            onTap: () => context.go('/home/city'),
                             windows: _cityWindows,
-                            onWindowTap: (window) => context.go('/friend-home/${window.id}'),
+                            onWindowTap: (window) => context.go('/home/friend-home/${window.id}'),
                             imageSize: 440,
                           ),
                           const SizedBox(width: 60),
@@ -96,7 +101,7 @@ class _CityScreenState extends State<CityScreen> {
                             label: 'Graveyard',
                             assetName:
                                 'images/buildings/ME_Singles_Graveyard_48x48_Big_Gate.png',
-                            onTap: () => context.go('/cemetery'),
+                            onTap: () => context.go('/home/cemetery'),
                           ),
                         ],
                       ),
@@ -108,6 +113,8 @@ class _CityScreenState extends State<CityScreen> {
           ),
         ],
       ),
+        ],
+      ),
     );
   }
 
@@ -115,7 +122,7 @@ class _CityScreenState extends State<CityScreen> {
     return Container(
       width: _isMenuOpen ? 220 : 56,
       decoration: BoxDecoration(
-        color: palette.backgroundMain,
+        color: palette.backgroundMain.withValues(alpha: 0.85),
         border: Border(
           right: BorderSide(color: palette.ink.withValues(alpha: 0.15)),
         ),
@@ -160,16 +167,16 @@ class _CityScreenState extends State<CityScreen> {
               _menuItem(
                 Icons.yard,
                 'My balcony',
-                () => GoRouter.of(context).go('/'),
+                () => GoRouter.of(context).go('/home'),
               ),
               _menuItem(
                 Icons.calendar_month,
                 'Calendar',
-                () => GoRouter.of(context).go('/calendar'),),
+                () => GoRouter.of(context).go('/home/calendar'),),
               _menuItem(
                 Icons.location_city,
                 'City',
-                () => GoRouter.of(context).go('/city'),
+                () => GoRouter.of(context).go('/home/city'),
               ),
               _menuItem(Icons.settings, 'Settings', null),
             ],

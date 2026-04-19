@@ -47,9 +47,15 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
       child: IgnorePointer(
         ignoring: _duringCelebration,
         child: Scaffold(
-          backgroundColor: palette.backgroundPlaySession,
+          backgroundColor: Colors.transparent,
           body: Stack(
             children: [
+              Positioned.fill(
+                child: Image.asset(
+                  'assets/images/zahod.jpg',
+                  fit: BoxFit.cover,
+                ),
+              ),
               Row(
                 children: [
                   _buildMenuPanel(palette),
@@ -77,7 +83,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
     return Container(
       width: _isMenuOpen ? 220 : 56,
       decoration: BoxDecoration(
-        color: palette.backgroundMain,
+        color: palette.backgroundMain.withValues(alpha: 0.85),
         border: Border(
           right: BorderSide(color: palette.ink.withValues(alpha: 0.15)),
         ),
@@ -122,16 +128,16 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
               _menuItem(
                 Icons.yard,
                 'My balcony',
-                () => GoRouter.of(context).go('/'),
+                () => GoRouter.of(context).go('/home'),
               ),
               _menuItem(
                 Icons.calendar_month,
                 'Calendar',
-                () => GoRouter.of(context).go('/calendar'),),
+                () => GoRouter.of(context).go('/home/calendar'),),
               _menuItem(
                 Icons.location_city,
                 'City',
-                () => GoRouter.of(context).go('/city'),
+                () => GoRouter.of(context).go('/home/city'),
               ),
               _menuItem(Icons.settings, 'Settings', null),
             ],
@@ -152,17 +158,17 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
   }
 
   Widget _buildGarden() {
-    return InteractiveViewer(
-      minScale: 0.5,
-      maxScale: 3.0,
-      boundaryMargin: const EdgeInsets.all(100),
-      child: Stack(
+    return Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/buildings/balkonF1.png',
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.none,
+            child: Transform.scale(
+              scale: 1.0,
+              alignment: Alignment.bottomCenter,
+              child: Image.asset(
+                'assets/images/buildings/balkonF1.png',
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.none,
+              ),
             ),
           ),
           SafeArea(
@@ -177,7 +183,6 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
             ),
         ),
       ],
-      ),
     );
   }
 
@@ -185,7 +190,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
     return Container(
       width: _isSeedBoxOpen ? 180 : 56,
       decoration: BoxDecoration(
-        color: palette.backgroundLevelSelection,
+        color: palette.backgroundLevelSelection.withValues(alpha: 0.85),
         border: Border(
           left: BorderSide(color: palette.ink.withValues(alpha: 0.15)),
         ),
@@ -265,6 +270,6 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
     await Future<void>.delayed(_celebrationDuration);
     if (!mounted) return;
 
-    GoRouter.of(context).go('/won', extra: {'score': score});
+    GoRouter.of(context).go('/home/won', extra: {'score': score});
   }
 }
