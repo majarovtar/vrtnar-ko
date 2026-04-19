@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart' hide Level;
 import 'package:provider/provider.dart';
 
+import '../shared/menu_weather_summary.dart';
+
 import '../audio/audio_controller.dart';
 import '../audio/sounds.dart';
 import '../game_internals/board_state.dart';
@@ -140,6 +142,11 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                 () => GoRouter.of(context).go('/home/city'),
               ),
               _menuItem(Icons.settings, 'Settings', null),
+              const Spacer(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: MenuWeatherSummary(),
+              ),
             ],
           ],
         ),

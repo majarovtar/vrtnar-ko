@@ -10,6 +10,7 @@ import '../player_progress/player_progress.dart';
 import '../style/my_button.dart';
 import '../style/palette.dart';
 import '../style/responsive_screen.dart';
+import '../shared/compact_weather_panel.dart';
 import 'custom_name_dialog.dart';
 import 'settings.dart';
 
@@ -73,11 +74,18 @@ class SettingsScreen extends StatelessWidget {
             _gap,
           ],
         ),
-        rectangularMenuArea: MyButton(
-          onPressed: () {
-            GoRouter.of(context).pop();
-          },
-          child: const Text('Back'),
+        rectangularMenuArea: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CompactWeatherPanel(),
+            const SizedBox(height: 20),
+            MyButton(
+              onPressed: () {
+                GoRouter.of(context).pop();
+              },
+              child: const Text('Back'),
+            ),
+          ],
         ),
       ),
     );

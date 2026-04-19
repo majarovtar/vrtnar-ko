@@ -1,4 +1,5 @@
 import '../api/perenual_service.dart';
+import '../api/weather_service.dart';
 import 'seed.dart';
 
 enum GrowthStage {
@@ -20,6 +21,8 @@ class Plant {
   final DateTime plantedAt;
   PlantDetails? details;
   late final Future<PlantDetails?> detailsFuture;
+  WeatherData? _lastWeather;
+  DateTime? _lastWeatherFetch;
 
   Plant({required this.seed, DateTime? plantedAt})
       : plantedAt = plantedAt ?? DateTime.now() {
@@ -31,12 +34,68 @@ class Plant {
     return details;
   }
 
+  /// Get current weather data (cached for 5 minutes)
+  Future<WeatherData?> _getWeather() async {
+    final now = DateTime.now();
+    if (_lastWeather != null && _lastWeatherFetch != null) {
+      if (now.difference(_lastWeatherFetch!).inMinutes < 5) {
+        return _lastWeather;
+      }
+    }
+
+    _lastWeather = await WeatherService().getDefaultLocationWeather();
+    _lastWeatherFetch = now;
+    return _lastWeather;
+  }
+
+  /// Calculate elapsed time adjusted by weather conditions
+  /// This simulates how weather affects plant growth
+  Future<int> _getWeatherAdjustedElapsed() async {
+    final baseElapsed = DateTime.now().difference(plantedAt).inSeconds;
+    final weather = await _getWeather();
+
+    if (weather == null) {
+      return baseElapsed;
+    }
+
+    // Apply weather growth multiplier to accelerate or decelerate growth
+    final adjustedElapsed = (baseElapsed * weather.growthMultiplier).toInt();
+    return adjustedElapsed;
+  }
+
   GrowthStage get growthStage {
     final elapsed = DateTime.now().difference(plantedAt).inSeconds;
     if (elapsed < 10) return GrowthStage.seedling;
     if (elapsed < 20) return GrowthStage.sprout;
     if (elapsed < 30) return GrowthStage.flowering;
     return GrowthStage.mature;
+  }
+
+  /// Get growth stage adjusted by current weather conditions
+  /// This is an async version that considers weather impact
+  Future<GrowthStage> getWeatherAdjustedGrowthStage() async {
+    final elapsed = await _getWeatherAdjustedElapsed();
+    if (elapsed < 10) return GrowthStage.seedling;
+    if (elapsed < 20) return GrowthStage.sprout;
+    if (elapsed < 30) return GrowthStage.flowering;
+    return GrowthStage.mature;
+  }
+
+  /// Get watering recommendation based on current weather
+  Future<String> getWateringRecommendation() async {
+    final weather = await _getWeather();
+    if (weather == null) return 'Unable to fetch weather data';
+
+    final needs = weather.wateringNeeds;
+    final recommendation = switch (needs) {
+      < 0.2 => '💧 No watering needed (sufficient rain)',
+      < 0.4 => '💧 Light watering',
+      < 0.6 => '💧💧 Moderate watering',
+      < 0.8 => '💧💧💧 Heavy watering',
+      _ => '💧💧💧💧 Frequent watering (very hot/dry)',
+    };
+
+    return '$recommendation\n${weather.toString()}';
   }
 
   String get assetPath => switch (growthStage) {
@@ -49,8 +108,11 @@ class Plant {
   String get growthInfo {
     final elapsed = DateTime.now().difference(plantedAt).inSeconds;
     final stage = growthStage;
+    final weatherStatus = _lastWeather != null
+        ? '\nWeather impact: ${(_lastWeather!.growthMultiplier * 100).toStringAsFixed(0)}%'
+        : '';
     return '${seed.asCharacter} ${seed.name}\n'
         'Stage: ${stage.displayName}\n'
-        'Planted ${elapsed}s ago';
+        'Planted ${elapsed}s ago$weatherStatus';
   }
 }

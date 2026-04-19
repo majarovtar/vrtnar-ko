@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../shared/menu_weather_summary.dart';
 import '../style/palette.dart';
 
 class CityScreen extends StatefulWidget {
@@ -179,6 +180,11 @@ class _CityScreenState extends State<CityScreen> {
                 () => GoRouter.of(context).go('/home/city'),
               ),
               _menuItem(Icons.settings, 'Settings', null),
+              const Spacer(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: MenuWeatherSummary(),
+              ),
             ],
           ],
         ),
