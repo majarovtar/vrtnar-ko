@@ -323,3 +323,4 @@ class _PlayerHandWidgetState extends State<PlayerHandWidget> {
       ],
     );
   }
+}
