@@ -32,30 +32,14 @@ class CityScreen extends StatefulWidget {
 class _CityScreenState extends State<CityScreen> {
   bool _isMenuOpen = true;
 
-  final List<_FriendWindow> _cityWindows = const [
-    _FriendWindow(
-      id: 'anna',
-      name: 'Anna',
-      left: 0.10,
-      top: 0.40,
-      width: 0.24,
-      height: 0.18,
-    ),
+  final List<_FriendWindow> _cityWindows = [
     _FriendWindow(
       id: 'maria',
       name: 'Maria',
-      left: 0.55,
-      top: 0.36,
-      width: 0.22,
-      height: 0.16,
-    ),
-    _FriendWindow(
-      id: 'lucas',
-      name: 'Lucas',
-      left: 0.55,
-      top: 0.58,
-      width: 0.22,
-      height: 0.16,
+      left: 0.66,
+      top: 0.45,
+      width: 0.18,
+      height: 0.12,
     ),
   ];
 
@@ -210,12 +194,12 @@ class _CityScreenState extends State<CityScreen> {
 class _FriendWindow {
   final String id;
   final String name;
-  final double left;
-  final double top;
+  double left;
+  double top;
   final double width;
   final double height;
 
-  const _FriendWindow({
+  _FriendWindow({
     required this.id,
     required this.name,
     required this.left,
@@ -343,12 +327,30 @@ class _DestinationTileState extends State<_DestinationTile>
       width: width * window.width,
       height: height * window.height,
       child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         onEnter: (_) => _setHoveredWindow(index),
         onExit: (_) => _setHoveredWindow(null),
         child: GestureDetector(
           onTap: () => widget.onWindowTap?.call(window),
+          onPanUpdate: (details) {
+            setState(() {
+              window.left += details.delta.dx / width;
+              window.top += details.delta.dy / height;
+              // Clamp to stay within the building image
+              window.left = window.left.clamp(0.0, 1.0 - window.width);
+              window.top = window.top.clamp(0.0, 1.0 - window.height);
+            });
+          },
           child: Container(
-            color: Colors.transparent,
+            decoration: BoxDecoration(
+              color: _hoveredWindowIndex == index
+                  ? Colors.white.withValues(alpha: 0.2)
+                  : Colors.transparent,
+              border: _hoveredWindowIndex == index
+                  ? Border.all(color: Colors.white, width: 2)
+                  : null,
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
         ),
       ),
