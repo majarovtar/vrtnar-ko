@@ -10,6 +10,7 @@ import 'calendar/calendar_screen.dart';
 import 'city/city_screen.dart';
 import 'city/city_windows_screen.dart';
 import 'city/friend_home_screen.dart';
+import 'city/graveyard_screen.dart';
 import 'game_internals/score.dart';
 import 'play_session/play_session_screen.dart';
 import 'settings/settings_screen.dart';
@@ -86,7 +87,7 @@ final router = GoRouter(
         GoRoute(
           path: 'cemetery',
           builder: (context, state) =>
-              const PlaceholderScreen(title: 'Cemetery'),
+              const GraveyardScreen(),
         ),
         GoRoute(
           path: 'friend-balcony',

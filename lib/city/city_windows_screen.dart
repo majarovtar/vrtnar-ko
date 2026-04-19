@@ -12,7 +12,7 @@ class _CityWindowsScreenState extends State<CityWindowsScreen> {
   int? _hoveredWindow;
 
   static const String _cityAsset =
-      'assets/images/buildings/ME_Singles_Generic_Building_48x48_Condo_4_39.png';
+      'images/buildings/ME_Singles_Generic_Building_48x48_Condo_4_39.png';
 
   final List<_FriendWindow> _windows = const [
     _FriendWindow(

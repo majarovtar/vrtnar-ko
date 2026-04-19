@@ -94,14 +94,14 @@ class _CityScreenState extends State<CityScreen> {
                           _DestinationTile(
                             label: 'Marketplace',
                             assetName:
-                                'assets/images/buildings/ME_Singles_Shopping_Center_and_Markets_48x48_Market_Medium_3.png',
+                                'images/buildings/ME_Singles_Shopping_Center_and_Markets_48x48_Market_Medium_3.png',
                             onTap: () => context.go('/marketplace'),
                           ),
                           const SizedBox(width: 60),
                           _DestinationTile(
                             label: 'City',
                             assetName:
-                                'assets/images/buildings/ME_Singles_Generic_Building_48x48_Condo_4_39.png',
+                                'images/buildings/ME_Singles_Generic_Building_48x48_Condo_4_39.png',
                             onTap: () => context.go('/city'),
                             windows: _cityWindows,
                             onWindowTap: (window) => context.go('/friend-home/${window.id}'),
@@ -111,7 +111,7 @@ class _CityScreenState extends State<CityScreen> {
                           _DestinationTile(
                             label: 'Graveyard',
                             assetName:
-                                'assets/images/buildings/ME_Singles_Graveyard_48x48_Big_Gate.png',
+                                'images/buildings/ME_Singles_Graveyard_48x48_Big_Gate.png',
                             onTap: () => context.go('/cemetery'),
                           ),
                         ],
