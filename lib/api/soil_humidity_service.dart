@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class SoilHumidityService {
-  static const String _baseUrl = 'http://10.32.242.156:5000/api';
+  static const String _baseUrl = 'http://127.0.0.1:5000/api';
 
   static final SoilHumidityService _instance = SoilHumidityService._();
   factory SoilHumidityService() => _instance;

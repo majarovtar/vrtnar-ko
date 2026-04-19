@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../shared/menu_weather_summary.dart';
 import '../style/palette.dart';
 
 class CityScreen extends StatefulWidget {
@@ -32,30 +33,14 @@ class CityScreen extends StatefulWidget {
 class _CityScreenState extends State<CityScreen> {
   bool _isMenuOpen = true;
 
-  final List<_FriendWindow> _cityWindows = const [
-    _FriendWindow(
-      id: 'anna',
-      name: 'Anna',
-      left: 0.10,
-      top: 0.40,
-      width: 0.24,
-      height: 0.18,
-    ),
+  final List<_FriendWindow> _cityWindows = [
     _FriendWindow(
       id: 'maria',
       name: 'Maria',
-      left: 0.55,
-      top: 0.36,
-      width: 0.22,
-      height: 0.16,
-    ),
-    _FriendWindow(
-      id: 'lucas',
-      name: 'Lucas',
-      left: 0.55,
-      top: 0.58,
-      width: 0.22,
-      height: 0.16,
+      left: 0.66,
+      top: 0.45,
+      width: 0.18,
+      height: 0.12,
     ),
   ];
 
@@ -64,15 +49,20 @@ class _CityScreenState extends State<CityScreen> {
     final palette = context.watch<Palette>();
 
     return Scaffold(
-      body: Row(
+      body: Stack(
         children: [
-          _buildMenuPanel(palette),
-          Expanded(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Container(color: const Color(0xFFBFE3FF)),
-                ),
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/citybg.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Row(
+            children: [
+              _buildMenuPanel(palette),
+              Expanded(
+                child: Stack(
+                  children: [
                 Positioned(
                   left: 0,
                   right: 0,
@@ -95,16 +85,16 @@ class _CityScreenState extends State<CityScreen> {
                             label: 'Marketplace',
                             assetName:
                                 'images/buildings/ME_Singles_Shopping_Center_and_Markets_48x48_Market_Medium_3.png',
-                            onTap: () => context.go('/marketplace'),
+                            onTap: () => context.go('/home/marketplace'),
                           ),
                           const SizedBox(width: 60),
                           _DestinationTile(
                             label: 'City',
                             assetName:
                                 'images/buildings/ME_Singles_Generic_Building_48x48_Condo_4_39.png',
-                            onTap: () => context.go('/city'),
+                            onTap: () => context.go('/home/city'),
                             windows: _cityWindows,
-                            onWindowTap: (window) => context.go('/friend-home/${window.id}'),
+                            onWindowTap: (window) => context.go('/home/friend-home/${window.id}'),
                             imageSize: 440,
                           ),
                           const SizedBox(width: 60),
@@ -112,7 +102,7 @@ class _CityScreenState extends State<CityScreen> {
                             label: 'Graveyard',
                             assetName:
                                 'images/buildings/ME_Singles_Graveyard_48x48_Big_Gate.png',
-                            onTap: () => context.go('/cemetery'),
+                            onTap: () => context.go('/home/cemetery'),
                           ),
                         ],
                       ),
@@ -124,6 +114,8 @@ class _CityScreenState extends State<CityScreen> {
           ),
         ],
       ),
+        ],
+      ),
     );
   }
 
@@ -131,7 +123,7 @@ class _CityScreenState extends State<CityScreen> {
     return Container(
       width: _isMenuOpen ? 220 : 56,
       decoration: BoxDecoration(
-        color: palette.backgroundMain,
+        color: palette.backgroundMain.withValues(alpha: 0.85),
         border: Border(
           right: BorderSide(color: palette.ink.withValues(alpha: 0.15)),
         ),
@@ -176,18 +168,23 @@ class _CityScreenState extends State<CityScreen> {
               _menuItem(
                 Icons.yard,
                 'My balcony',
-                () => GoRouter.of(context).go('/'),
+                () => GoRouter.of(context).go('/home'),
               ),
               _menuItem(
                 Icons.calendar_month,
                 'Calendar',
-                () => GoRouter.of(context).go('/calendar'),),
+                () => GoRouter.of(context).go('/home/calendar'),),
               _menuItem(
                 Icons.location_city,
                 'City',
-                () => GoRouter.of(context).go('/city'),
+                () => GoRouter.of(context).go('/home/city'),
               ),
               _menuItem(Icons.settings, 'Settings', null),
+              const Spacer(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: MenuWeatherSummary(),
+              ),
             ],
           ],
         ),
@@ -210,12 +207,12 @@ class _CityScreenState extends State<CityScreen> {
 class _FriendWindow {
   final String id;
   final String name;
-  final double left;
-  final double top;
+  double left;
+  double top;
   final double width;
   final double height;
 
-  const _FriendWindow({
+  _FriendWindow({
     required this.id,
     required this.name,
     required this.left,
@@ -343,12 +340,30 @@ class _DestinationTileState extends State<_DestinationTile>
       width: width * window.width,
       height: height * window.height,
       child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         onEnter: (_) => _setHoveredWindow(index),
         onExit: (_) => _setHoveredWindow(null),
         child: GestureDetector(
           onTap: () => widget.onWindowTap?.call(window),
+          onPanUpdate: (details) {
+            setState(() {
+              window.left += details.delta.dx / width;
+              window.top += details.delta.dy / height;
+              // Clamp to stay within the building image
+              window.left = window.left.clamp(0.0, 1.0 - window.width);
+              window.top = window.top.clamp(0.0, 1.0 - window.height);
+            });
+          },
           child: Container(
-            color: Colors.transparent,
+            decoration: BoxDecoration(
+              color: _hoveredWindowIndex == index
+                  ? Colors.white.withValues(alpha: 0.2)
+                  : Colors.transparent,
+              border: _hoveredWindowIndex == index
+                  ? Border.all(color: Colors.white, width: 2)
+                  : null,
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class FriendHomeScreen extends StatefulWidget {
   final String friendName;
@@ -101,6 +102,10 @@ class _FriendHomeScreenState extends State<FriendHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.friendName}\'s Home'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/home/city'),
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(

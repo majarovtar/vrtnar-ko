@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../game_internals/playing_area.dart';
-import '../style/palette.dart';
+import 'board_widget.dart';
 import 'plant_info_dialog.dart';
 import 'playing_card_widget.dart';
 
@@ -24,16 +23,6 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   @override
   void initState() {
     super.initState();
-    _startGrowthTimer();
-  }
-
-  @override
-  void dispose() {
-    _growthTimer?.cancel();
-    super.dispose();
-  }
-
-  void _startGrowthTimer() {
     _growthTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (widget.area.plant != null) {
         setState(() {});
@@ -42,50 +31,78 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final palette = context.watch<Palette>();
+  void dispose() {
+    _growthTimer?.cancel();
+    super.dispose();
+  }
 
-    return LimitedBox(
-      maxHeight: 120,
-      child: AspectRatio(
-        aspectRatio: 1 / 1,
-        child: DragTarget<PlayingCardDragData>(
-          builder: (context, candidateData, rejectedData) => Material(
-            color: isHighlighted
-                ? palette.accept.withValues(alpha: 0.3)
-                : palette.trueWhite.withValues(alpha: 0.15),
-            shape: const CircleBorder(),
-            clipBehavior: Clip.hardEdge,
-            child: InkWell(
-              splashColor: palette.redPen,
-              onTap: widget.area.plant != null
-                  ? () => showPlantInfoDialog(context, widget.area)
-                  : null,
-              child: StreamBuilder(
-                stream: widget.area.allChanges,
-                builder: (context, child) => _buildContent(),
-              ),
-            ),
+  @override
+  Widget build(BuildContext context) {
+    final content = SizedBox(
+      width: 64,
+      height: 64,
+      child: DragTarget<PlayingCardDragData>(
+        builder: (context, candidateData, rejectedData) => GestureDetector(
+          onTap: widget.area.plant != null
+              ? () => showPlantInfoDialog(context, widget.area)
+              : null,
+          child: StreamBuilder(
+            stream: widget.area.allChanges,
+            builder: (context, _) => _buildContent(),
           ),
-          onWillAcceptWithDetails: _onDragWillAccept,
-          onLeave: _onDragLeave,
-          onAcceptWithDetails: _onDragAccept,
+        ),
+        onWillAcceptWithDetails: _onDragWillAccept,
+        onLeave: _onDragLeave,
+        onAcceptWithDetails: _onDragAccept,
+      ),
+    );
+
+    return LongPressDraggable<VaseMoveDragData>(
+      delay: const Duration(milliseconds: 150),
+      data: VaseMoveDragData(widget.area),
+      feedback: Opacity(
+        opacity: 0.8,
+        child: Material(
+          color: Colors.transparent,
+          child: SizedBox(
+            width: 64,
+            height: 64,
+            child: _buildContent(),
+          ),
         ),
       ),
+      childWhenDragging: Opacity(opacity: 0.3, child: content),
+      child: content,
     );
   }
 
   Widget _buildContent() {
     final plant = widget.area.plant;
-    if (plant == null) return const SizedBox.shrink();
 
-    return Center(
-      child: Image.asset(
-        plant.assetPath,
-        width: 48,
-        height: 48,
-        filterQuality: FilterQuality.none,
-      ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          bottom: 0,
+          child: Image.asset(
+            'assets/images/supplies/ME_Singles_Garden_48x48_Vase_Full.png',
+            width: 48,
+            height: 48,
+            filterQuality: FilterQuality.none,
+            opacity: AlwaysStoppedAnimation(isHighlighted ? 0.7 : 1.0),
+          ),
+        ),
+        if (plant != null)
+          Positioned(
+            top: 0,
+            child: Image.asset(
+              plant.assetPath,
+              width: 56,
+              height: 56,
+              filterQuality: FilterQuality.none,
+            ),
+          ),
+      ],
     );
   }
 
@@ -99,7 +116,6 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   }
 
   bool _onDragWillAccept(DragTargetDetails<PlayingCardDragData> details) {
-    if (details.data.sourceArea == widget.area) return false;
     if (widget.area.plant != null) return false;
     setState(() => isHighlighted = true);
     return true;
