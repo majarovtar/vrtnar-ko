@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../game_internals/board_state.dart';
+import 'board_widget.dart';
 import 'playing_card_widget.dart';
 
 class PlayerHandWidget extends StatefulWidget {
@@ -38,6 +39,25 @@ class _PlayerHandWidgetState extends State<PlayerHandWidget> {
                       child: Text('Drop seed to return'),
                     ),
                   ),
+                // Draggable vase
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Draggable<VaseDragData>(
+                    data: const VaseDragData(),
+                    feedback: Image.asset(
+                      'assets/images/supplies/ME_Singles_Garden_48x48_Vase_Full.png',
+                      width: 48,
+                      height: 48,
+                      filterQuality: FilterQuality.none,
+                    ),
+                    childWhenDragging: Opacity(
+                      opacity: 0.5,
+                      child: _vaseRow(),
+                    ),
+                    child: _vaseRow(),
+                  ),
+                ),
+                // Seed cards
                 ...boardState.player.hand.map(
                   (card) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -63,7 +83,6 @@ class _PlayerHandWidgetState extends State<PlayerHandWidget> {
             );
           },
           onWillAcceptWithDetails: (details) {
-            // Only accept cards from playing areas, not from the hand
             if (details.data.sourceArea != null && details.data.holder == null) {
               setState(() => isHighlighted = true);
               return true;
@@ -74,7 +93,6 @@ class _PlayerHandWidgetState extends State<PlayerHandWidget> {
             setState(() => isHighlighted = false);
           },
           onAcceptWithDetails: (details) {
-            // Remove plant from the source area and add card back to hand
             if (details.data.sourceArea != null) {
               details.data.sourceArea!.removePlant();
             }
@@ -83,6 +101,23 @@ class _PlayerHandWidgetState extends State<PlayerHandWidget> {
           },
         );
       },
+    );
+  }
+
+  Widget _vaseRow() {
+    return Row(
+      children: [
+        Image.asset(
+          'assets/images/supplies/ME_Singles_Garden_48x48_Vase_Full.png',
+          width: 36,
+          height: 36,
+          filterQuality: FilterQuality.none,
+        ),
+        const SizedBox(width: 8),
+        const Expanded(
+          child: Text('Planter', style: TextStyle(fontSize: 13)),
+        ),
+      ],
     );
   }
 }

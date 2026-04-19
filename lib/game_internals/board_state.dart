@@ -1,24 +1,28 @@
-// Copyright 2022, the Flutter project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'package:flutter/foundation.dart';
 
 import 'player.dart';
 import 'playing_area.dart';
 
-class BoardState {
+class BoardState extends ChangeNotifier {
   final VoidCallback onWin;
 
-  static const int plotCount = 6;
-
-  final List<PlayingArea> areas =
-      List.generate(plotCount, (_) => PlayingArea());
+  final List<PlayingArea> areas = [];
 
   final Player player = Player();
 
   BoardState({required this.onWin}) {
     player.addListener(_handlePlayerChange);
+  }
+
+  void addArea({double x = 0, double y = 0}) {
+    areas.add(PlayingArea(x: x, y: y));
+    notifyListeners();
+  }
+
+  void removeArea(PlayingArea area) {
+    area.dispose();
+    areas.remove(area);
+    notifyListeners();
   }
 
   void dispose() {
