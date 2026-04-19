@@ -53,7 +53,7 @@ class _CityScreenState extends State<CityScreen> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/citybg.png',
+              'assets/images/pixel-art-city-game-level-600nw.webp',
               fit: BoxFit.cover,
             ),
           ),
@@ -80,12 +80,14 @@ class _CityScreenState extends State<CityScreen> {
                       const SizedBox(height: 32),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           _DestinationTile(
                             label: 'Marketplace',
                             assetName:
                                 'images/buildings/ME_Singles_Shopping_Center_and_Markets_48x48_Market_Medium_3.png',
                             onTap: () => context.go('/home/marketplace'),
+                            imageHeight: 180,
                           ),
                           const SizedBox(width: 60),
                           _DestinationTile(
@@ -95,7 +97,7 @@ class _CityScreenState extends State<CityScreen> {
                             onTap: () => context.go('/home/city'),
                             windows: _cityWindows,
                             onWindowTap: (window) => context.go('/home/friend-home/${window.id}'),
-                            imageSize: 440,
+                            imageHeight: 180,
                           ),
                           const SizedBox(width: 60),
                           _DestinationTile(
@@ -103,6 +105,7 @@ class _CityScreenState extends State<CityScreen> {
                             assetName:
                                 'images/buildings/ME_Singles_Graveyard_48x48_Big_Gate.png',
                             onTap: () => context.go('/home/cemetery'),
+                            imageHeight: 180,
                           ),
                         ],
                       ),
@@ -226,7 +229,8 @@ class _DestinationTile extends StatefulWidget {
   final String label;
   final String assetName;
   final VoidCallback? onTap;
-  final double imageSize;
+  final double imageHeight;
+  final double? imageWidth;
   final List<_FriendWindow>? windows;
   final void Function(_FriendWindow)? onWindowTap;
 
@@ -234,7 +238,8 @@ class _DestinationTile extends StatefulWidget {
     required this.label,
     required this.assetName,
     this.onTap,
-    this.imageSize = 220,
+    this.imageHeight = 180,
+    this.imageWidth,
     this.windows,
     this.onWindowTap,
   });
@@ -306,21 +311,22 @@ class _DestinationTileState extends State<_DestinationTile>
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
-                  width: widget.imageSize,
-                  height: widget.imageSize,
+                  width: widget.imageWidth ?? widget.imageHeight,
+                  height: widget.imageHeight,
                   child: Stack(
+                    alignment: Alignment.bottomCenter,
                     children: [
                       Positioned.fill(
                         child: Image.asset(
                           widget.assetName,
-                          fit: BoxFit.contain,
+                          fit: BoxFit.fitHeight,
                         ),
                       ),
                       if (widget.windows != null)
                         for (var i = 0; i < widget.windows!.length; i++)
-                          _buildWindowOverlay(widget.imageSize, widget.imageSize, i),
+                          _buildWindowOverlay(widget.imageWidth ?? widget.imageHeight, widget.imageHeight, i),
                       if (_hoveredWindowIndex != null && widget.windows != null)
-                        _buildWindowLabel(widget.imageSize, widget.imageSize, _hoveredWindowIndex!),
+                        _buildWindowLabel(widget.imageWidth ?? widget.imageHeight, widget.imageHeight, _hoveredWindowIndex!),
                     ],
                   ),
                 ),

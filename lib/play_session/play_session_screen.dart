@@ -93,6 +93,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
       child: SafeArea(
         right: false,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(

@@ -153,6 +153,7 @@ class _PlayerHandWidgetState extends State<PlayerHandWidget> {
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
+                  isExpanded: true,
                   initialValue: _selectedSunlight,
                   decoration: const InputDecoration(
                     labelText: 'Sunlight',

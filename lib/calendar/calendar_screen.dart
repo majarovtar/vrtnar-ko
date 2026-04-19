@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../shared/menu_weather_summary.dart';
+import '../style/palette.dart';
 import 'calendar_view_mode.dart';
 import 'widgets/day_view.dart';
 import 'widgets/month_view.dart';
@@ -12,6 +17,7 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
+  bool _isMenuOpen = true;
   CalendarViewMode _viewMode = CalendarViewMode.day;
   DateTime _selectedDate = DateTime.now();
 
@@ -222,78 +228,169 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.watch<Palette>();
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Garden Calendar'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: Row(
         children: [
-          const _CalendarHeader(),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ChoiceChip(
-                label: const Text('Day'),
-                selected: _viewMode == CalendarViewMode.day,
-                onSelected: (_) {
-                  setState(() {
-                    _viewMode = CalendarViewMode.day;
-                  });
-                },
-              ),
-              const SizedBox(width: 8),
-              ChoiceChip(
-                label: const Text('Week'),
-                selected: _viewMode == CalendarViewMode.week,
-                onSelected: (_) {
-                  setState(() {
-                    _viewMode = CalendarViewMode.week;
-                  });
-                },
-              ),
-              const SizedBox(width: 8),
-              ChoiceChip(
-                label: const Text('Month'),
-                selected: _viewMode == CalendarViewMode.month,
-                onSelected: (_) {
-                  setState(() {
-                    _viewMode = CalendarViewMode.month;
-                  });
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              IconButton(
-                onPressed: _goToPreviousPeriod,
-                icon: const Icon(Icons.chevron_left),
-              ),
-              TextButton(
-                onPressed: _goToToday,
-                child: const Text('Today'),
-              ),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    _currentPeriodLabel(),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+          _buildMenuPanel(palette),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                const _CalendarHeader(),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ChoiceChip(
+                      label: const Text('Day'),
+                      selected: _viewMode == CalendarViewMode.day,
+                      onSelected: (_) {
+                        setState(() {
+                          _viewMode = CalendarViewMode.day;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: const Text('Week'),
+                      selected: _viewMode == CalendarViewMode.week,
+                      onSelected: (_) {
+                        setState(() {
+                          _viewMode = CalendarViewMode.week;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: const Text('Month'),
+                      selected: _viewMode == CalendarViewMode.month,
+                      onSelected: (_) {
+                        setState(() {
+                          _viewMode = CalendarViewMode.month;
+                        });
+                      },
+                    ),
+                  ],
                 ),
-              ),
-              IconButton(
-                onPressed: _goToNextPeriod,
-                icon: const Icon(Icons.chevron_right),
-              ),
-            ],
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: _goToPreviousPeriod,
+                      icon: const Icon(Icons.chevron_left),
+                    ),
+                    TextButton(
+                      onPressed: _goToToday,
+                      child: const Text('Today'),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          _currentPeriodLabel(),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _goToNextPeriod,
+                      icon: const Icon(Icons.chevron_right),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buildCurrentView(),
+              ],
+            ),
           ),
-          const SizedBox(height: 20),
-          _buildCurrentView(),
         ],
       ),
+    );
+  }
+
+  Widget _buildMenuPanel(Palette palette) {
+    return Container(
+      width: _isMenuOpen ? 220 : 56,
+      decoration: BoxDecoration(
+        color: palette.backgroundMain.withValues(alpha: 0.85),
+        border: Border(
+          right: BorderSide(color: palette.ink.withValues(alpha: 0.15)),
+        ),
+      ),
+      child: SafeArea(
+        right: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 56,
+              child: _isMenuOpen
+                  ? Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 16),
+                          child: Text(
+                            'Menu',
+                            style: TextStyle(
+                              fontFamily: 'Permanent Marker',
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left),
+                          onPressed: () =>
+                              setState(() => _isMenuOpen = false),
+                        ),
+                      ],
+                    )
+                  : Center(
+                      child: IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () =>
+                            setState(() => _isMenuOpen = true),
+                      ),
+                    ),
+            ),
+            if (_isMenuOpen) ...[
+              _menuItem(
+                Icons.yard,
+                'My balcony',
+                () => GoRouter.of(context).go('/home'),
+              ),
+              _menuItem(
+                Icons.calendar_month,
+                'Calendar',
+                () => GoRouter.of(context).go('/home/calendar'),
+              ),
+              _menuItem(
+                Icons.location_city,
+                'City',
+                () => GoRouter.of(context).go('/home/city'),
+              ),
+              _menuItem(Icons.settings, 'Settings', null),
+              const Spacer(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: MenuWeatherSummary(),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _menuItem(IconData icon, String label, VoidCallback? onTap) {
+    return ListTile(
+      leading: Icon(icon, size: 20),
+      title: Text(label, style: const TextStyle(fontSize: 14)),
+      onTap: onTap,
+      enabled: onTap != null,
+      dense: true,
     );
   }
 }
