@@ -49,7 +49,7 @@ class PlayingCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(compact ? 3 : 5),
       ),
       child: Image.asset(
-        'assets/maja/tile000.png',
+        card.seed.seedImageAsset,
         fit: BoxFit.contain,
         filterQuality: FilterQuality.none,
       ),

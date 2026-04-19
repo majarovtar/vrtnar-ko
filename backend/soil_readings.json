@@ -131,5 +131,397 @@
     "device_timestamp": 5592,
     "server_timestamp": "2026-04-18T22:18:44.057822",
     "received_at": "2026-04-19T00:18:44.057859"
+  },
+  {
+    "id": 20,
+    "humidity": 25,
+    "device_timestamp": 185,
+    "server_timestamp": "2026-04-19T08:49:06.986122",
+    "received_at": "2026-04-19T10:49:06.986305"
+  },
+  {
+    "id": 21,
+    "humidity": 0,
+    "device_timestamp": 247,
+    "server_timestamp": "2026-04-19T08:49:50.588895",
+    "received_at": "2026-04-19T10:49:50.588967"
+  },
+  {
+    "id": 22,
+    "humidity": 1,
+    "device_timestamp": 216,
+    "server_timestamp": "2026-04-19T08:50:01.124268",
+    "received_at": "2026-04-19T10:50:01.124283"
+  },
+  {
+    "id": 23,
+    "humidity": 0,
+    "device_timestamp": 277,
+    "server_timestamp": "2026-04-19T08:50:29.757996",
+    "received_at": "2026-04-19T10:50:29.758050"
+  },
+  {
+    "id": 24,
+    "humidity": 0,
+    "device_timestamp": 1180,
+    "server_timestamp": "2026-04-19T09:05:23.860380",
+    "received_at": "2026-04-19T11:05:23.860405"
+  },
+  {
+    "id": 25,
+    "humidity": 0,
+    "device_timestamp": 1211,
+    "server_timestamp": "2026-04-19T09:05:54.088712",
+    "received_at": "2026-04-19T11:05:54.088887"
+  },
+  {
+    "id": 26,
+    "humidity": 0,
+    "device_timestamp": 1241,
+    "server_timestamp": "2026-04-19T09:06:24.792873",
+    "received_at": "2026-04-19T11:06:24.792985"
+  },
+  {
+    "id": 27,
+    "humidity": 0,
+    "device_timestamp": 1272,
+    "server_timestamp": "2026-04-19T09:07:04.074151",
+    "received_at": "2026-04-19T11:07:04.074174"
+  },
+  {
+    "id": 28,
+    "humidity": 0,
+    "device_timestamp": 1302,
+    "server_timestamp": "2026-04-19T09:07:25.710530",
+    "received_at": "2026-04-19T11:07:25.710555"
+  },
+  {
+    "id": 29,
+    "humidity": 0,
+    "device_timestamp": 1332,
+    "server_timestamp": "2026-04-19T09:07:55.949309",
+    "received_at": "2026-04-19T11:07:55.949792"
+  },
+  {
+    "id": 30,
+    "humidity": 0,
+    "device_timestamp": 1363,
+    "server_timestamp": "2026-04-19T09:08:26.605292",
+    "received_at": "2026-04-19T11:08:26.605316"
+  },
+  {
+    "id": 31,
+    "humidity": 0,
+    "device_timestamp": 1393,
+    "server_timestamp": "2026-04-19T09:08:57.087353",
+    "received_at": "2026-04-19T11:08:57.087382"
+  },
+  {
+    "id": 32,
+    "humidity": 0,
+    "device_timestamp": 1424,
+    "server_timestamp": "2026-04-19T09:09:27.578261",
+    "received_at": "2026-04-19T11:09:27.578361"
+  },
+  {
+    "id": 33,
+    "humidity": 0,
+    "device_timestamp": 1454,
+    "server_timestamp": "2026-04-19T09:09:58.079222",
+    "received_at": "2026-04-19T11:09:58.079291"
+  },
+  {
+    "id": 34,
+    "humidity": 0,
+    "device_timestamp": 1485,
+    "server_timestamp": "2026-04-19T09:10:29.292779",
+    "received_at": "2026-04-19T11:10:29.292822"
+  },
+  {
+    "id": 35,
+    "humidity": 0,
+    "device_timestamp": 1515,
+    "server_timestamp": "2026-04-19T09:10:59.194401",
+    "received_at": "2026-04-19T11:10:59.194449"
+  },
+  {
+    "id": 36,
+    "humidity": 0,
+    "device_timestamp": 1546,
+    "server_timestamp": "2026-04-19T09:11:29.732346",
+    "received_at": "2026-04-19T11:11:29.732446"
+  },
+  {
+    "id": 37,
+    "humidity": 0,
+    "device_timestamp": 1577,
+    "server_timestamp": "2026-04-19T09:12:00.342941",
+    "received_at": "2026-04-19T11:12:00.343016"
+  },
+  {
+    "id": 38,
+    "humidity": 0,
+    "device_timestamp": 1607,
+    "server_timestamp": "2026-04-19T09:12:30.865765",
+    "received_at": "2026-04-19T11:12:30.865804"
+  },
+  {
+    "id": 39,
+    "humidity": 0,
+    "device_timestamp": 1638,
+    "server_timestamp": "2026-04-19T09:13:04.562576",
+    "received_at": "2026-04-19T11:13:04.562647"
+  },
+  {
+    "id": 40,
+    "humidity": 2,
+    "device_timestamp": 1668,
+    "server_timestamp": "2026-04-19T09:13:32.340444",
+    "received_at": "2026-04-19T11:13:32.340612"
+  },
+  {
+    "id": 41,
+    "humidity": 0,
+    "device_timestamp": 1699,
+    "server_timestamp": "2026-04-19T09:14:03.492673",
+    "received_at": "2026-04-19T11:14:03.492742"
+  },
+  {
+    "id": 42,
+    "humidity": 0,
+    "device_timestamp": 1729,
+    "server_timestamp": "2026-04-19T09:14:33.067251",
+    "received_at": "2026-04-19T11:14:33.067306"
+  },
+  {
+    "id": 43,
+    "humidity": 0,
+    "device_timestamp": 1760,
+    "server_timestamp": "2026-04-19T09:15:03.834773",
+    "received_at": "2026-04-19T11:15:03.834821"
+  },
+  {
+    "id": 44,
+    "humidity": 0,
+    "device_timestamp": 1791,
+    "server_timestamp": "2026-04-19T09:15:34.297269",
+    "received_at": "2026-04-19T11:15:34.297362"
+  },
+  {
+    "id": 45,
+    "humidity": 0,
+    "device_timestamp": 1821,
+    "server_timestamp": "2026-04-19T09:16:04.664079",
+    "received_at": "2026-04-19T11:16:04.664155"
+  },
+  {
+    "id": 46,
+    "humidity": 0,
+    "device_timestamp": 1851,
+    "server_timestamp": "2026-04-19T09:16:56.295351",
+    "received_at": "2026-04-19T11:16:56.295375"
+  },
+  {
+    "id": 47,
+    "humidity": 0,
+    "device_timestamp": 1882,
+    "server_timestamp": "2026-04-19T09:17:05.617303",
+    "received_at": "2026-04-19T11:17:05.617350"
+  },
+  {
+    "id": 48,
+    "humidity": 0,
+    "device_timestamp": 1912,
+    "server_timestamp": "2026-04-19T09:17:36.026173",
+    "received_at": "2026-04-19T11:17:36.026351"
+  },
+  {
+    "id": 49,
+    "humidity": 43,
+    "device_timestamp": 1943,
+    "server_timestamp": "2026-04-19T09:18:06.432843",
+    "received_at": "2026-04-19T11:18:06.432883"
+  },
+  {
+    "id": 50,
+    "humidity": 1,
+    "device_timestamp": 1973,
+    "server_timestamp": "2026-04-19T09:18:37.103309",
+    "received_at": "2026-04-19T11:18:37.103339"
+  },
+  {
+    "id": 51,
+    "humidity": 0,
+    "device_timestamp": 2004,
+    "server_timestamp": "2026-04-19T09:19:08.084965",
+    "received_at": "2026-04-19T11:19:08.085053"
+  },
+  {
+    "id": 52,
+    "humidity": 0,
+    "device_timestamp": 2065,
+    "server_timestamp": "2026-04-19T09:20:10.223937",
+    "received_at": "2026-04-19T11:20:10.223977"
+  },
+  {
+    "id": 53,
+    "humidity": 0,
+    "device_timestamp": 2096,
+    "server_timestamp": "2026-04-19T09:21:00.503204",
+    "received_at": "2026-04-19T11:21:00.503403"
+  },
+  {
+    "id": 54,
+    "humidity": 0,
+    "device_timestamp": 2126,
+    "server_timestamp": "2026-04-19T09:21:09.912189",
+    "received_at": "2026-04-19T11:21:09.912216"
+  },
+  {
+    "id": 55,
+    "humidity": 0,
+    "device_timestamp": 2035,
+    "server_timestamp": "2026-04-19T09:21:12.343869",
+    "received_at": "2026-04-19T11:21:12.343876"
+  },
+  {
+    "id": 56,
+    "humidity": 0,
+    "device_timestamp": 2157,
+    "server_timestamp": "2026-04-19T09:22:01.907568",
+    "received_at": "2026-04-19T11:22:01.907592"
+  },
+  {
+    "id": 57,
+    "humidity": 5,
+    "device_timestamp": 2187,
+    "server_timestamp": "2026-04-19T09:22:10.468661",
+    "received_at": "2026-04-19T11:22:10.468704"
+  },
+  {
+    "id": 58,
+    "humidity": 0,
+    "device_timestamp": 2217,
+    "server_timestamp": "2026-04-19T09:22:41.837082",
+    "received_at": "2026-04-19T11:22:41.837129"
+  },
+  {
+    "id": 59,
+    "humidity": 0,
+    "device_timestamp": 2248,
+    "server_timestamp": "2026-04-19T09:23:11.876521",
+    "received_at": "2026-04-19T11:23:11.876557"
+  },
+  {
+    "id": 60,
+    "humidity": 26,
+    "device_timestamp": 2279,
+    "server_timestamp": "2026-04-19T09:23:42.416865",
+    "received_at": "2026-04-19T11:23:42.416890"
+  },
+  {
+    "id": 61,
+    "humidity": 29,
+    "device_timestamp": 2309,
+    "server_timestamp": "2026-04-19T09:24:12.725214",
+    "received_at": "2026-04-19T11:24:12.725632"
+  },
+  {
+    "id": 62,
+    "humidity": 0,
+    "device_timestamp": 2339,
+    "server_timestamp": "2026-04-19T09:24:44.448037",
+    "received_at": "2026-04-19T11:24:44.448291"
+  },
+  {
+    "id": 63,
+    "humidity": 42,
+    "device_timestamp": 2460,
+    "server_timestamp": "2026-04-19T09:26:53.290193",
+    "received_at": "2026-04-19T11:26:53.290481"
+  },
+  {
+    "id": 64,
+    "humidity": 0,
+    "device_timestamp": 2521,
+    "server_timestamp": "2026-04-19T09:27:47.616561",
+    "received_at": "2026-04-19T11:27:47.616648"
+  },
+  {
+    "id": 65,
+    "humidity": 0,
+    "device_timestamp": 2491,
+    "server_timestamp": "2026-04-19T09:27:56.863870",
+    "received_at": "2026-04-19T11:27:56.863901"
+  },
+  {
+    "id": 66,
+    "humidity": 0,
+    "device_timestamp": 2583,
+    "server_timestamp": "2026-04-19T09:29:04.385304",
+    "received_at": "2026-04-19T11:29:04.385403"
+  },
+  {
+    "id": 67,
+    "humidity": 33,
+    "device_timestamp": 2613,
+    "server_timestamp": "2026-04-19T09:29:16.582051",
+    "received_at": "2026-04-19T11:29:16.582075"
+  },
+  {
+    "id": 68,
+    "humidity": 1,
+    "device_timestamp": 2643,
+    "server_timestamp": "2026-04-19T09:29:51.947768",
+    "received_at": "2026-04-19T11:29:51.947813"
+  },
+  {
+    "id": 69,
+    "humidity": 0,
+    "device_timestamp": 2674,
+    "server_timestamp": "2026-04-19T09:30:17.514393",
+    "received_at": "2026-04-19T11:30:17.514478"
+  },
+  {
+    "id": 70,
+    "humidity": 0,
+    "device_timestamp": 2704,
+    "server_timestamp": "2026-04-19T09:30:48.049613",
+    "received_at": "2026-04-19T11:30:48.049741"
+  },
+  {
+    "id": 71,
+    "humidity": 20,
+    "device_timestamp": 2735,
+    "server_timestamp": "2026-04-19T09:31:18.363700",
+    "received_at": "2026-04-19T11:31:18.363723"
+  },
+  {
+    "id": 72,
+    "humidity": 6,
+    "device_timestamp": 2552,
+    "server_timestamp": "2026-04-19T09:31:27.059964",
+    "received_at": "2026-04-19T11:31:27.059987"
+  },
+  {
+    "id": 73,
+    "humidity": 0,
+    "device_timestamp": 2765,
+    "server_timestamp": "2026-04-19T09:31:48.686166",
+    "received_at": "2026-04-19T11:31:48.686194"
+  },
+  {
+    "id": 74,
+    "humidity": 57,
+    "device_timestamp": 2795,
+    "server_timestamp": "2026-04-19T09:32:18.891878",
+    "received_at": "2026-04-19T11:32:18.891924"
+  },
+  {
+    "id": 75,
+    "humidity": 0,
+    "device_timestamp": 2826,
+    "server_timestamp": "2026-04-19T09:32:50.249878",
+    "received_at": "2026-04-19T11:32:50.249894"
   }
 ]

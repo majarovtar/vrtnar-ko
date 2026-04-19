@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../api/perenual_service.dart';
+import '../api/soil_humidity_service.dart';
+import '../game_internals/graveyard.dart';
+import '../game_internals/plant.dart';
 import '../game_internals/playing_area.dart';
 
 void showPlantInfoDialog(BuildContext context, PlayingArea area) {
@@ -37,7 +41,7 @@ class PlantInfoDialog extends StatelessWidget {
         curve: Curves.easeOutCubic,
       ),
       child: SimpleDialog(
-        title: Text('${plant.seed.asCharacter} ${plant.seed.name}'),
+        title: Text('${plant.seed.asCharacter} ${plant.name ?? plant.seed.name}'),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -65,6 +69,25 @@ class PlantInfoDialog extends StatelessWidget {
                     'Planted ${elapsed}s ago',
                     style: const TextStyle(fontSize: 14),
                   ),
+                ),
+                FutureBuilder<SoilReading?>(
+                  future: SoilHumidityService().getLatestReading(),
+                  builder: (context, snapshot) {
+                    final reading = snapshot.data;
+                    if (reading == null) return const SizedBox.shrink();
+                    final color = reading.humidity < 10
+                        ? Colors.red
+                        : Colors.green;
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Center(
+                        child: Text(
+                          'Moisture: ${reading.humidity}% (Needed moisture: 10%)',
+                          style: TextStyle(fontSize: 14, color: color),
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 FutureBuilder<PlantDetails?>(
                   future: plant.detailsFuture,
@@ -102,8 +125,37 @@ class PlantInfoDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+          if (plant.watered)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8, left: 16),
+              child: Center(
+                child: Text(
+                  'Next watering in 1 day',
+                  style: TextStyle(fontSize: 13, color: Colors.blueGrey),
+                ),
+              ),
+            )
+          else
+            TextButton(
+              onPressed: () {
+                plant.watered = true;
+                Navigator.pop(context);
+              },
+              child: const Text('Water'),
+            ),
+          if (plant.growthStage == GrowthStage.mature)
+            TextButton(
+              onPressed: () {
+                area.removePlant();
+                Navigator.pop(context);
+              },
+              child: const Text('Harvest'),
+            ),
           TextButton(
             onPressed: () {
+              context.read<Graveyard>().add(
+                DeadPlant(seed: plant.seed, name: plant.name, removedAt: DateTime.now()),
+              );
               area.removePlant();
               Navigator.pop(context);
             },

@@ -106,9 +106,38 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
     );
   }
 
-  void _onDragAccept(DragTargetDetails<PlayingCardDragData> details) {
-    widget.area.plantSeed(details.data.card.seed);
+  void _onDragAccept(DragTargetDetails<PlayingCardDragData> details) async {
+    final seed = details.data.card.seed;
     setState(() => isHighlighted = false);
+
+    final name = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController();
+        return AlertDialog(
+          title: Text('Name your ${seed.name}'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(hintText: 'Enter a name'),
+            onSubmitted: (value) => Navigator.pop(context, value),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: const Text('Skip'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, controller.text),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    final trimmed = name?.trim();
+    widget.area.plantSeed(seed, name: trimmed != null && trimmed.isNotEmpty ? trimmed : null);
   }
 
   void _onDragLeave(PlayingCardDragData? data) {

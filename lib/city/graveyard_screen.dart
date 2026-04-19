@@ -1,29 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class GraveyardScreen extends StatefulWidget {
+import '../game_internals/graveyard.dart';
+
+class GraveyardScreen extends StatelessWidget {
   const GraveyardScreen({super.key});
 
   @override
-  State<GraveyardScreen> createState() => _GraveyardScreenState();
-}
-
-class _GraveyardScreenState extends State<GraveyardScreen> {
-  final List<_DeadFlower> _deadFlowers = [
-    const _DeadFlower(name: 'Micka', dateDied: '2026-01-10'),
-    const _DeadFlower(name: 'Stanislav', dateDied: '2026-02-12'),
-    const _DeadFlower(name: 'Lilijana', dateDied: '2026-03-16'),
-  ];
-
-  final List<_PlantSpot> _plantSpots = const [
-    _PlantSpot(name: 'Micka', left: 2.6/11, top: 3.7/11, width: 0.15, height: 0.15),
-    _PlantSpot(name: 'Stanislav', left: 7.8/11, top: 4.6/11, width: 0.15, height: 0.15),
-    _PlantSpot(name: 'Lilijana', left: 7.5/11, top: 8.27/11, width: 0.15, height: 0.15),
-  ];
-
-  int? _hoveredPlantIndex;
-
-  @override
   Widget build(BuildContext context) {
+    final graveyard = context.watch<Graveyard>();
+    final plants = graveyard.plants;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Graveyard'),
@@ -47,60 +34,14 @@ class _GraveyardScreenState extends State<GraveyardScreen> {
                 const SizedBox(height: 16),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(24),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Stack(
-                        children: [
-                          Image.asset(
-                            'images/buildings/g1.png',
-                            width: constraints.maxWidth,
-                            fit: BoxFit.fitWidth,
-                          ),
-                          for (var i = 0; i < _plantSpots.length; i++)
-                            Positioned(
-                              left: constraints.maxWidth * _plantSpots[i].left,
-                              top: constraints.maxWidth * _plantSpots[i].top,
-                              width: constraints.maxWidth * _plantSpots[i].width,
-                              height: constraints.maxWidth * _plantSpots[i].height,
-                              child: MouseRegion(
-                                onEnter: (_) => setState(() => _hoveredPlantIndex = i),
-                                onExit: (_) => setState(() => _hoveredPlantIndex = null),
-                                child: Container(
-                                  color: Colors.transparent,
-                                ),
-                              ),
-                            ),
-                          if (_hoveredPlantIndex != null)
-                            Positioned(
-                              left: constraints.maxWidth * _plantSpots[_hoveredPlantIndex!].left,
-                              top: constraints.maxWidth * _plantSpots[_hoveredPlantIndex!].top - 28,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.75),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  _plantSpots[_hoveredPlantIndex!].name,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-                    },
+                  child: Image.asset(
+                    'images/buildings/g1.png',
+                    fit: BoxFit.fitWidth,
                   ),
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'Dead flowers',
+                  'Dead plants',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
@@ -108,13 +49,14 @@ class _GraveyardScreenState extends State<GraveyardScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                const Text(
-                  'These are the flowers that died in the graveyard. Each entry shows the flower name and the date it was found gone.',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                for (var i = 0; i < _deadFlowers.length; i++)
-                  _buildDeadFlowerCard(context, i),
+                if (plants.isEmpty)
+                  const Text(
+                    'No plants have been removed yet.',
+                    textAlign: TextAlign.center,
+                  )
+                else
+                  for (final plant in plants)
+                    _buildGravestoneCard(context, plant),
               ],
             ),
           ),
@@ -123,8 +65,10 @@ class _GraveyardScreenState extends State<GraveyardScreen> {
     );
   }
 
-  Widget _buildDeadFlowerCard(BuildContext context, int index) {
-    final flower = _deadFlowers[index];
+  Widget _buildGravestoneCard(BuildContext context, DeadPlant plant) {
+    final date = plant.removedAt;
+    final dateStr =
+        '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -132,47 +76,35 @@ class _GraveyardScreenState extends State<GraveyardScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Row(
           children: [
             Text(
-              flower.name,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              plant.seed.asCharacter,
+              style: const TextStyle(fontSize: 32),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Died: ${flower.dateDied}',
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    plant.name ?? plant.seed.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Removed: $dateStr',
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
-}
-
-class _DeadFlower {
-  final String name;
-  final String dateDied;
-
-  const _DeadFlower({
-    required this.name,
-    required this.dateDied,
-  });
-}
-
-class _PlantSpot {
-  final String name;
-  final double left;
-  final double top;
-  final double width;
-  final double height;
-
-  const _PlantSpot({
-    required this.name,
-    required this.left,
-    required this.top,
-    required this.width,
-    required this.height,
-  });
 }

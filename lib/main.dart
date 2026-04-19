@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import 'app_lifecycle/app_lifecycle.dart';
 import 'audio/audio_controller.dart';
+import 'game_internals/graveyard.dart';
 import 'player_progress/player_progress.dart';
 import 'router.dart';
 import 'settings/settings.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
           Provider(create: (context) => SettingsController()),
           Provider(create: (context) => Palette()),
           ChangeNotifierProvider(create: (context) => PlayerProgress()),
+          ChangeNotifierProvider(create: (context) => Graveyard()),
           // Set up audio.
           ProxyProvider2<
             AppLifecycleStateNotifier,
