@@ -6,16 +6,18 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import 'calendar/calendar_screen.dart';
+import 'city/city_screen.dart';
+import 'city/city_windows_screen.dart';
+import 'city/friend_home_screen.dart';
+import 'city/graveyard_screen.dart';
 import 'game_internals/score.dart';
 import 'play_session/play_session_screen.dart';
 import 'settings/settings_screen.dart';
+import 'shared/placeholder_screen.dart';
 import 'style/my_transition.dart';
 import 'style/palette.dart';
 import 'win_game/win_game_screen.dart';
-
-import 'city/city_screen.dart';
-import 'calendar/calendar_screen.dart';
-import 'shared/placeholder_screen.dart';
 
 
 final router = GoRouter(
@@ -62,6 +64,22 @@ final router = GoRouter(
           builder: (context, state) => const CityScreen(key: Key('city')),
         ),
         GoRoute(
+          path: 'city-windows',
+          builder: (context, state) => const CityWindowsScreen(),
+        ),
+        GoRoute(
+          path: 'friend-home/:friendId',
+          builder: (context, state) {
+            final friendId = state.pathParameters['friendId'] ?? '';
+            final names = {
+              'anna': 'Anna',
+              'maria': 'Maria',
+              'lucas': 'Lucas',
+            };
+            return FriendHomeScreen(friendName: names[friendId] ?? 'Friend');
+          },
+        ),
+        GoRoute(
           path: 'marketplace',
           builder: (context, state) =>
               const PlaceholderScreen(title: 'Marketplace'),
@@ -69,7 +87,7 @@ final router = GoRouter(
         GoRoute(
           path: 'cemetery',
           builder: (context, state) =>
-              const PlaceholderScreen(title: 'Cemetery'),
+              const GraveyardScreen(),
         ),
         GoRoute(
           path: 'friend-balcony',
