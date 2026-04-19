@@ -43,7 +43,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
     final palette = context.watch<Palette>();
 
     return MultiProvider(
-      providers: [Provider.value(value: _boardState)],
+      providers: [ChangeNotifierProvider.value(value: _boardState)],
       child: IgnorePointer(
         ignoring: _duringCelebration,
         child: Scaffold(
@@ -152,15 +152,31 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
   }
 
   Widget _buildGarden() {
-    return SafeArea(
-      left: false,
-      right: false,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return InteractiveViewer(
+      minScale: 0.5,
+      maxScale: 3.0,
+      boundaryMargin: const EdgeInsets.all(100),
+      child: Stack(
         children: [
-          const Expanded(child: BoardWidget()),
-          const Text('Drag seeds into the garden above.'),
-        ],
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/buildings/balkonF1.png',
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.none,
+            ),
+          ),
+          SafeArea(
+            left: false,
+            right: false,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Expanded(child: BoardWidget()),
+                const Text('Drag seeds into the garden above.'),
+              ],
+            ),
+        ),
+      ],
       ),
     );
   }

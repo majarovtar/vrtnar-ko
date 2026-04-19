@@ -9,13 +9,17 @@ class PlayingArea {
   /// The current plant in this area, if any.
   Plant? plant;
 
+  /// Position on the board (relative to the board's top-left).
+  double x;
+  double y;
+
   final StreamController<void> _playerChanges =
       StreamController<void>.broadcast();
 
   final StreamController<void> _remoteChanges =
       StreamController<void>.broadcast();
 
-  PlayingArea();
+  PlayingArea({this.x = 0, this.y = 0});
 
   /// A [Stream] that fires an event every time any change to this area is made.
   Stream<void> get allChanges =>

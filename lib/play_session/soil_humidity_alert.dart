@@ -40,7 +40,7 @@ class _SoilHumidityAlertState extends State<SoilHumidityAlert>
   }
 
   void _scheduleNextCheck() {
-    Future.delayed(const Duration(seconds: 30), () {
+    Future.delayed(const Duration(minutes: 30), () {
       if (mounted) {
         _checkSoilHumidity();
         _scheduleNextCheck();

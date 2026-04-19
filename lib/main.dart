@@ -87,11 +87,10 @@ class MyApp extends StatelessWidget {
                       seedColor: palette.darkPen,
                       surface: palette.backgroundMain,
                     ),
-                    textTheme: TextTheme(
-                      bodyMedium: TextStyle(
-                        color: palette.ink,
-                        fontFamily: 'Press Start 2P',
-                      ),
+                    textTheme: ThemeData.light().textTheme.apply(
+                      fontFamily: 'Press Start 2P',
+                      bodyColor: palette.ink,
+                      displayColor: palette.ink,
                     ),
                     useMaterial3: true,
                   ).copyWith(

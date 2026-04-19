@@ -33,6 +33,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/buildings/
+    - assets/images/supplies/
     - assets/maja/
     - assets/music/
     - assets/sfx/
