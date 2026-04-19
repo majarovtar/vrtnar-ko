@@ -167,7 +167,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
 
   Widget _buildSeedBox(Palette palette) {
     return Container(
-      width: _isSeedBoxOpen ? 180 : 56,
+      width: _isSeedBoxOpen ? 320 : 56,
       decoration: BoxDecoration(
         color: palette.backgroundLevelSelection,
         border: Border(

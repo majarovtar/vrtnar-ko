@@ -4,11 +4,11 @@ import 'seed.dart';
 
 @immutable
 class PlayingCard {
-  final Seed seed;
+  final SeedLike seed;
 
   final int value;
 
-  const PlayingCard(this.seed, this.value);
+  PlayingCard(this.seed, this.value) : assert(value >= 1 && value <= 10);
 
   @override
   int get hashCode => Object.hash(seed, value);

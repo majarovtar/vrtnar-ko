@@ -30,7 +30,7 @@ class PlayingArea {
   Stream<void> get remoteChanges => _remoteChanges.stream;
 
   /// Plants a [seed] in this area.
-  void plantSeed(Seed seed) {
+  void plantSeed(SeedLike seed) {
     plant = Plant(seed: seed);
     _playerChanges.add(null);
   }

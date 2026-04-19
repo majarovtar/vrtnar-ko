@@ -16,7 +16,7 @@ enum GrowthStage {
 }
 
 class Plant {
-  final Seed seed;
+  final SeedLike seed;
   final DateTime plantedAt;
   PlantDetails? details;
   late final Future<PlantDetails?> detailsFuture;
@@ -27,7 +27,10 @@ class Plant {
   }
 
   Future<PlantDetails?> _loadDetails() async {
-    details = await PerenualService().fetchPlantDetails(seed.name);
+    // Only fetch details for custom seeds (which have plantId)
+    if (seed is CustomSeed) {
+      details = await PerenualService().fetchPlantDetails(seed.name);
+    }
     return details;
   }
 
