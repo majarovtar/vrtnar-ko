@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../shared/menu_weather_summary.dart';
+import '../style/palette.dart';
 
 class FriendHomeScreen extends StatefulWidget {
   final String friendName;
@@ -14,6 +18,8 @@ class FriendHomeScreen extends StatefulWidget {
 }
 
 class _FriendHomeScreenState extends State<FriendHomeScreen> {
+  bool _isMenuOpen = true;
+
   final List<_JournalMessage> _messages = [
     _JournalMessage(
       text: 'The sunflower is finally blooming and the yellow petals look amazing.',
@@ -98,6 +104,7 @@ class _FriendHomeScreenState extends State<FriendHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isMaria = widget.friendName.toLowerCase() == 'maria';
+    final palette = context.watch<Palette>();
 
     return Scaffold(
       appBar: AppBar(
@@ -107,76 +114,84 @@ class _FriendHomeScreenState extends State<FriendHomeScreen> {
           onPressed: () => context.go('/home/city'),
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  widget.friendName,
-                  style: Theme.of(context).textTheme.headlineLarge,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                if (isMaria) ...[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Stack(
-                          children: [
-                            Image.asset(
-                              'images/buildings/ME_Singles_Garden_48x48_Large_Greenhouse_Layer_1_See_Through.png',
-                              width: constraints.maxWidth,
-                              fit: BoxFit.fitWidth,
-                            ),
-                            for (var i = 0; i < _plantSpots.length; i++)
-                              Positioned(
-                                left: constraints.maxWidth * _plantSpots[i].left,
-                                top: constraints.maxWidth * _plantSpots[i].top,
-                                width: constraints.maxWidth * _plantSpots[i].width,
-                                height: constraints.maxWidth * _plantSpots[i].height,
-                                child: MouseRegion(
-                                  onEnter: (_) => setState(() => _hoveredPlantIndex = i),
-                                  onExit: (_) => setState(() => _hoveredPlantIndex = null),
-                                  child: Container(
-                                    color: Colors.transparent,
-                                  ),
-                                ),
-                              ),
-                            if (_hoveredPlantIndex != null)
-                              Positioned(
-                                left: constraints.maxWidth * _plantSpots[_hoveredPlantIndex!].left,
-                                top: constraints.maxWidth * _plantSpots[_hoveredPlantIndex!].top - 28,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.75),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    _plantSpots[_hoveredPlantIndex!].name,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
+      body: Row(
+        children: [
+          if (isMaria) _buildMenuPanel(palette),
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.friendName,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      if (isMaria) ...[
+                        SizedBox(
+                          width: 400,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return Stack(
+                                  children: [
+                                    Image.asset(
+                                      'images/buildings/ME_Singles_Garden_48x48_Large_Greenhouse_Layer_1_See_Through.png',
+                                      width: constraints.maxWidth,
+                                      fit: BoxFit.fitWidth,
                                     ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+                                    for (var i = 0; i < _plantSpots.length; i++)
+                                      Positioned(
+                                        left: constraints.maxWidth * _plantSpots[i].left,
+                                        top: constraints.maxWidth * _plantSpots[i].top,
+                                        width: constraints.maxWidth * _plantSpots[i].width,
+                                        height: constraints.maxWidth * _plantSpots[i].height,
+                                        child: MouseRegion(
+                                          onEnter: (_) => setState(() => _hoveredPlantIndex = i),
+                                          onExit: (_) => setState(() => _hoveredPlantIndex = null),
+                                          child: Container(
+                                            color: Colors.transparent,
+                                          ),
+                                        ),
+                                      ),
+                                    if (_hoveredPlantIndex != null)
+                                      Positioned(
+                                        left: constraints.maxWidth * _plantSpots[_hoveredPlantIndex!].left,
+                                        top: constraints.maxWidth * _plantSpots[_hoveredPlantIndex!].top - 28,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(0.75),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            _plantSpots[_hoveredPlantIndex!].name,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                      const SizedBox(height: 24),
                 Text(
                   'Flower journal',
                   style: Theme.of(context).textTheme.titleLarge,
@@ -197,11 +212,98 @@ class _FriendHomeScreenState extends State<FriendHomeScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ],
-              ],
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuPanel(Palette palette) {
+    return Container(
+      width: _isMenuOpen ? 220 : 56,
+      decoration: BoxDecoration(
+        color: palette.backgroundMain.withValues(alpha: 0.85),
+        border: Border(
+          right: BorderSide(color: palette.ink.withValues(alpha: 0.15)),
         ),
       ),
+      child: SafeArea(
+        right: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 56,
+              child: _isMenuOpen
+                  ? Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 16),
+                          child: Text(
+                            'Menu',
+                            style: TextStyle(
+                              fontFamily: 'Permanent Marker',
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left),
+                          onPressed: () =>
+                              setState(() => _isMenuOpen = false),
+                        ),
+                      ],
+                    )
+                  : Center(
+                      child: IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () =>
+                            setState(() => _isMenuOpen = true),
+                      ),
+                    ),
+            ),
+            if (_isMenuOpen) ...[
+              _menuItem(
+                Icons.location_city,
+                'Back to City',
+                () => GoRouter.of(context).go('/home/city'),
+              ),
+              _menuItem(
+                Icons.yard,
+                'My balcony',
+                () => GoRouter.of(context).go('/home'),
+              ),
+              _menuItem(
+                Icons.calendar_month,
+                'Calendar',
+                () => GoRouter.of(context).go('/home/calendar'),
+              ),
+              _menuItem(Icons.settings, 'Settings', null),
+              const Spacer(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: MenuWeatherSummary(),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _menuItem(IconData icon, String label, VoidCallback? onTap) {
+    return ListTile(
+      leading: Icon(icon, size: 20),
+      title: Text(label, style: const TextStyle(fontSize: 14)),
+      onTap: onTap,
+      enabled: onTap != null,
+      dense: true,
     );
   }
 

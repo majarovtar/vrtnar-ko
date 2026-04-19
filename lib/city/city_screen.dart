@@ -97,7 +97,7 @@ class _CityScreenState extends State<CityScreen> {
                             onTap: () => context.go('/home/city'),
                             windows: _cityWindows,
                             onWindowTap: (window) => context.go('/home/friend-home/${window.id}'),
-                            imageHeight: 180,
+                            imageHeight: 360,
                           ),
                           const SizedBox(width: 60),
                           _DestinationTile(
