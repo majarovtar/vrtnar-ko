@@ -1,62 +1,227 @@
 import 'package:flutter/material.dart';
+import 'calendar_view_mode.dart';
+import 'widgets/day_view.dart';
+import 'widgets/month_view.dart';
+import 'widgets/week_view.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const todayTasks = [
+  State<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends State<CalendarScreen> {
+  CalendarViewMode _viewMode = CalendarViewMode.day;
+  DateTime _selectedDate = DateTime.now();
+
+  late List<GardenTask> todayTasks;
+  late List<GardenTask> thisWeekTasks;
+  late List<GardenTask> overdueTasks;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final now = DateTime.now();
+
+    todayTasks = [
       GardenTask(
+        id: 'task_1',
         title: 'Water basil',
         plantName: 'Basil',
-        dueLabel: 'Today',
+        dueDate: DateTime(now.year, now.month, now.day),
         icon: Icons.water_drop,
-        description: 'Water the basil gently and check if the soil is still moist below the surface.',
+        description:
+            'Water the basil gently and check if the soil is still moist below the surface.',
       ),
       GardenTask(
+        id: 'task_2',
         title: 'Check tomato leaves',
         plantName: 'Tomato',
-        dueLabel: 'Today',
+        dueDate: DateTime(now.year, now.month, now.day),
         icon: Icons.search,
         description: 'Inspect the leaves for yellow spots, dryness, or insects.',
       ),
     ];
 
-    const thisWeekTasks = [
+    thisWeekTasks = [
       GardenTask(
+        id: 'task_3',
         title: 'Fertilize mint',
         plantName: 'Mint',
-        dueLabel: 'Monday',
+        dueDate: DateTime(now.year, now.month, now.day + 1),
         icon: Icons.energy_savings_leaf,
         description: 'Use a light fertilizer and avoid overfeeding.',
       ),
       GardenTask(
+        id: 'task_4',
         title: 'Rotate rosemary pot',
         plantName: 'Rosemary',
-        dueLabel: 'Wednesday',
+        dueDate: DateTime(now.year, now.month, now.day + 2),
         icon: Icons.rotate_right,
         description: 'Rotate the pot so all sides receive sunlight evenly.',
       ),
       GardenTask(
+        id: 'task_5',
         title: 'Repot chili plant',
         plantName: 'Chili',
-        dueLabel: 'Friday',
+        dueDate: DateTime(now.year, now.month, now.day + 4),
         icon: Icons.local_florist,
-        description: 'Move the chili plant into a slightly bigger pot with fresh soil.',
+        description:
+            'Move the chili plant into a slightly bigger pot with fresh soil.',
       ),
     ];
 
-    const overdueTasks = [
+    overdueTasks = [
       GardenTask(
+        id: 'task_6',
         title: 'Water lavender',
         plantName: 'Lavender',
-        dueLabel: '2 days late',
+        dueDate: DateTime(now.year, now.month, now.day - 2),
         icon: Icons.warning_amber_rounded,
-        description: 'Check dryness first. Lavender prefers less frequent watering.',
+        description:
+            'Check dryness first. Lavender prefers less frequent watering.',
         isOverdue: true,
       ),
     ];
+  }
 
+  void _markTaskAsDone(GardenTask task) {
+    setState(() {
+      todayTasks.removeWhere((item) => item.id == task.id);
+      thisWeekTasks.removeWhere((item) => item.id == task.id);
+      overdueTasks.removeWhere((item) => item.id == task.id);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${task.title} marked as done'),
+      ),
+    );
+  }
+
+  Future<void> _openTaskDetail(GardenTask task) async {
+    final wasCompleted = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PlantTaskDetailScreen(task: task),
+      ),
+    );
+
+    if (wasCompleted == true) {
+      _markTaskAsDone(task);
+    }
+  }
+
+  void _onMonthDateSelected(DateTime date) {
+    setState(() {
+      _selectedDate = date;
+      _viewMode = CalendarViewMode.day;
+    });
+  }
+
+  void _goToPreviousPeriod() {
+    setState(() {
+      switch (_viewMode) {
+        case CalendarViewMode.day:
+          _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+          break;
+        case CalendarViewMode.week:
+          _selectedDate = _selectedDate.subtract(const Duration(days: 7));
+          break;
+        case CalendarViewMode.month:
+          _selectedDate = DateTime(
+            _selectedDate.year,
+            _selectedDate.month - 1,
+            _selectedDate.day,
+          );
+          break;
+      }
+    });
+  }
+
+  void _goToToday() {
+    setState(() {
+      _selectedDate = DateTime.now();
+    });
+  }
+
+  void _goToNextPeriod() {
+    setState(() {
+      switch (_viewMode) {
+        case CalendarViewMode.day:
+          _selectedDate = _selectedDate.add(const Duration(days: 1));
+          break;
+        case CalendarViewMode.week:
+          _selectedDate = _selectedDate.add(const Duration(days: 7));
+          break;
+        case CalendarViewMode.month:
+          _selectedDate = DateTime(
+            _selectedDate.year,
+            _selectedDate.month + 1,
+            _selectedDate.day,
+          );
+          break;
+      }
+    });
+  }
+
+  String _currentPeriodLabel() {
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+
+    switch (_viewMode) {
+      case CalendarViewMode.day:
+        return '${monthNames[_selectedDate.month - 1]} ${_selectedDate.day}, ${_selectedDate.year}';
+      case CalendarViewMode.week:
+        final startOfWeek = _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
+        final endOfWeek = startOfWeek.add(const Duration(days: 6));
+        return '${startOfWeek.day}/${startOfWeek.month} - ${endOfWeek.day}/${endOfWeek.month}';
+      case CalendarViewMode.month:
+        return '${monthNames[_selectedDate.month - 1]} ${_selectedDate.year}';
+    }
+  }
+
+  Widget _buildCurrentView() {
+    final allTasks = [...todayTasks, ...thisWeekTasks, ...overdueTasks];
+
+    switch (_viewMode) {
+      case CalendarViewMode.day:
+        return DayView(
+          selectedDate: _selectedDate,
+          tasks: allTasks,
+          onTaskTap: _openTaskDetail,
+        );
+      case CalendarViewMode.week:
+        return WeekView(
+          selectedDate: _selectedDate,
+          tasks: allTasks,
+          onTaskTap: _openTaskDetail,
+        );
+      case CalendarViewMode.month:
+        return MonthView(
+          selectedDate: _selectedDate,
+          tasks: allTasks,
+          onDateTap: _onMonthDateSelected,
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Garden Calendar'),
@@ -66,45 +231,71 @@ class CalendarScreen extends StatelessWidget {
         children: [
           const _CalendarHeader(),
           const SizedBox(height: 20),
-          _TaskSection(
-            title: 'Today',
-            subtitle: 'Tasks your plants need right now',
-            tasks: todayTasks,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ChoiceChip(
+                label: const Text('Day'),
+                selected: _viewMode == CalendarViewMode.day,
+                onSelected: (_) {
+                  setState(() {
+                    _viewMode = CalendarViewMode.day;
+                  });
+                },
+              ),
+              const SizedBox(width: 8),
+              ChoiceChip(
+                label: const Text('Week'),
+                selected: _viewMode == CalendarViewMode.week,
+                onSelected: (_) {
+                  setState(() {
+                    _viewMode = CalendarViewMode.week;
+                  });
+                },
+              ),
+              const SizedBox(width: 8),
+              ChoiceChip(
+                label: const Text('Month'),
+                selected: _viewMode == CalendarViewMode.month,
+                onSelected: (_) {
+                  setState(() {
+                    _viewMode = CalendarViewMode.month;
+                  });
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              IconButton(
+                onPressed: _goToPreviousPeriod,
+                icon: const Icon(Icons.chevron_left),
+              ),
+              TextButton(
+                onPressed: _goToToday,
+                child: const Text('Today'),
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    _currentPeriodLabel(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: _goToNextPeriod,
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
           ),
           const SizedBox(height: 20),
-          _TaskSection(
-            title: 'This Week',
-            subtitle: 'Upcoming care reminders',
-            tasks: thisWeekTasks,
-          ),
-          const SizedBox(height: 20),
-          _TaskSection(
-            title: 'Overdue Plant Tasks',
-            subtitle: 'Plants that may need attention soon',
-            tasks: overdueTasks,
-          ),
+          _buildCurrentView(),
         ],
       ),
     );
   }
-}
-
-class GardenTask {
-  final String title;
-  final String plantName;
-  final String dueLabel;
-  final IconData icon;
-  final String description;
-  final bool isOverdue;
-
-  const GardenTask({
-    required this.title,
-    required this.plantName,
-    required this.dueLabel,
-    required this.icon,
-    required this.description,
-    this.isOverdue = false,
-  });
 }
 
 class _CalendarHeader extends StatelessWidget {
@@ -137,75 +328,6 @@ class _CalendarHeader extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _TaskSection extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final List<GardenTask> tasks;
-
-  const _TaskSection({
-    required this.title,
-    required this.subtitle,
-    required this.tasks,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          subtitle,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: 12),
-        if (tasks.isEmpty)
-          const Card(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('No tasks here yet.'),
-            ),
-          )
-        else
-          ...tasks.map((task) => _TaskCard(task: task)),
-      ],
-    );
-  }
-}
-
-class _TaskCard extends StatelessWidget {
-  final GardenTask task;
-
-  const _TaskCard({
-    required this.task,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: ListTile(
-        leading: Icon(task.icon),
-        title: Text(task.title),
-        subtitle: Text(task.plantName),
-        trailing: Text(task.dueLabel),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => PlantTaskDetailScreen(task: task),
-            ),
-          );
-        },
       ),
     );
   }
@@ -252,7 +374,7 @@ class PlantTaskDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Due: ${task.dueLabel}',
+                  'Due: ${task.dueDate.day}/${task.dueDate.month}/${task.dueDate.year}',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 16),
@@ -268,11 +390,7 @@ class PlantTaskDetailScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${task.title} marked as done'),
-                      ),
-                    );
+                    Navigator.pop(context, true);
                   },
                   child: const Text('Mark as Done'),
                 ),
