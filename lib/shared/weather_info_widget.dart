@@ -106,22 +106,25 @@ class _WeatherInfoWidgetState extends State<WeatherInfoWidget> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue),
+                    border: Border.all(color: Colors.purple),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Watering Needs:',
+                        'Air Quality:',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      _buildWateringIndicator(weather.wateringNeeds),
-                      const SizedBox(height: 8),
                       Text(
-                        '${(weather.wateringNeeds * 100).toStringAsFixed(0)}% of plant water capacity needed',
+                        '${weather.airQuality.toStringAsFixed(1)} µg/m³ PM2.5',
                         style: const TextStyle(fontSize: 12),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        weather.airQualityEmoji,
+                        style: const TextStyle(fontSize: 20, fontFamily: 'Noto Color Emoji'),
                       ),
                     ],
                   ),
@@ -142,11 +145,11 @@ class _WeatherInfoWidgetState extends State<WeatherInfoWidget> {
                         '• Growth multiplier affects plant growth speed\n'
                         '  - Optimal temp: 15-25°C\n'
                         '  - Extreme temps or weather slow growth\n\n'
-                        '• Watering needs dynamically change based on:\n'
-                        '  - Temperature (hot = more water)\n'
-                        '  - Humidity (dry = more water)\n'
-                        '  - Wind (increases evaporation)\n'
-                        '  - Rainfall (reduces watering needs)\n\n'
+                        '• Air quality (AQI) indicates pollution level\n'
+                        '  - 😊 Good: 0-50 (safe)\n'
+                        '  - 😐 Moderate: 51-100 (acceptable)\n'
+                        '  - 😷 Bad: 101+ (unhealthy)\n'
+                        '  - Shows only emoji + number\n\n'
                         '• Weather data is cached for 5 minutes\n'
                         '  to avoid excessive API calls',
                       ),
@@ -189,35 +192,6 @@ class _WeatherInfoWidgetState extends State<WeatherInfoWidget> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildWateringIndicator(double needs) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: List.generate(
-            5,
-            (index) => Expanded(
-              child: Container(
-                height: 8,
-                margin: const EdgeInsets.only(right: 4),
-                decoration: BoxDecoration(
-                  color: index < needs * 5
-                      ? needs > 0.8
-                          ? Colors.red
-                          : needs > 0.6
-                              ? Colors.orange
-                              : Colors.blue
-                      : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

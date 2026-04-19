@@ -89,13 +89,14 @@ class Plant {
     final weather = await _getWeather();
     if (weather == null) return 'Unable to fetch weather data';
 
-    final needs = weather.wateringNeeds;
-    final recommendation = switch (needs) {
-      < 0.2 => '💧 No watering needed (sufficient rain)',
+    // Recommend watering based on humidity and recent rainfall
+    final waterIndex = (1 - weather.humidity / 100) * 0.6 + (1 - weather.rainfall.clamp(0, 10) / 10) * 0.4;
+    final recommendation = switch (waterIndex) {
+      < 0.2 => '💧 No watering needed (sufficient moisture)',
       < 0.4 => '💧 Light watering',
       < 0.6 => '💧💧 Moderate watering',
       < 0.8 => '💧💧💧 Heavy watering',
-      _ => '💧💧💧💧 Frequent watering (very hot/dry)',
+      _ => '💧💧💧💧 Frequent watering (very dry)',
     };
 
     return '$recommendation\n${weather.toString()}';

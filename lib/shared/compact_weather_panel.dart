@@ -59,7 +59,7 @@ class _CompactWeatherPanelState extends State<CompactWeatherPanel> {
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -77,7 +77,7 @@ class _CompactWeatherPanelState extends State<CompactWeatherPanel> {
               _buildInfoRow('💧', '${weather.humidity.toStringAsFixed(0)}% / ${weather.rainfall.toStringAsFixed(1)}mm'),
               _buildInfoRow('💨', '${weather.windSpeed.toStringAsFixed(1)} km/h'),
               _buildInfoRow('🌱', '${(weather.growthMultiplier * 100).toStringAsFixed(0)}%'),
-              _buildWateringIndicator(weather.wateringNeeds),
+              _buildInfoRow(weather.airQualityEmoji, '${weather.airQuality.toStringAsFixed(0)} µg/m³'),
             ],
           ),
         );
@@ -90,7 +90,7 @@ class _CompactWeatherPanelState extends State<CompactWeatherPanel> {
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Text(icon, style: const TextStyle(fontSize: 16)),
+          Text(icon, style: const TextStyle(fontSize: 16, fontFamily: 'Noto Color Emoji')),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -101,38 +101,6 @@ class _CompactWeatherPanelState extends State<CompactWeatherPanel> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildWateringIndicator(double needs) {
-    return Row(
-      children: [
-        const Text('💧', style: TextStyle(fontSize: 16)),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Row(
-            children: List.generate(
-              5,
-              (index) => Expanded(
-                child: Container(
-                  height: 6,
-                  margin: const EdgeInsets.only(right: 2),
-                  decoration: BoxDecoration(
-                    color: index < needs * 5
-                        ? needs > 0.8
-                            ? Colors.red
-                            : needs > 0.6
-                                ? Colors.orange
-                                : Colors.blue
-                        : Colors.grey[300],
-                    borderRadius: BorderRadius.circular(1),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

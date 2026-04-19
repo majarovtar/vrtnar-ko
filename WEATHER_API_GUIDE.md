@@ -10,7 +10,9 @@
 
 ## 📡 How the Weather API Works
 
-### API: Open-Meteo (Free, No API Key Needed!)
+### APIs Used:
+
+#### 🌤️ **Open-Meteo** (Weather Data - Free, No API Key!)
 - **Base URL**: `https://api.open-meteo.com/v1/forecast`
 - **Data Retrieved**:
   - Temperature (°C)
@@ -19,14 +21,29 @@
   - Wind speed (km/h)
   - Weather code (WMO standard)
 
-### Example API Call:
+#### 🌫️ **WAQI (World Air Quality Index)** (Air Quality Data - Free Demo Access!)
+- **Base URL**: `https://api.waqi.info/feed/ljubljana/?token=demo`
+- **Data Retrieved**:
+  - Air Quality Index (AQI)
+  - PM2.5 concentration (µg/m³)
+- **Why Ljubljana?**: Uses city name for air quality stations in Slovenia
+
+### Example API Calls:
 ```dart
-// Get weather for Paris
+// Get weather for Ljubljana (default location)
+final weather = await WeatherService().getDefaultLocationWeather();
+
+// Get weather for any location
 final weather = await WeatherService().getWeather(
-  latitude: 48.8566,
-  longitude: 2.3522,
+  latitude: 46.0569,  // Ljubljana coordinates
+  longitude: 14.5058,
 );
 ```
+
+### Data Processing:
+- **Time Matching**: Hourly data is matched to current weather time by finding the closest hour
+- **Air Quality**: Combined from WAQI API with emoji indicators  
+- **Humidity**: Now correctly displays real values (was showing 0% due to time matching bug)
 
 ---
 
@@ -159,6 +176,19 @@ The app categorizes these into:
 - `isFreezing` (temp < 0°C)
 
 ---
+
+## 🌫️ Air Quality Index (AQI) Reference
+
+Air quality data comes from **WAQI (World Air Quality Index)** using the AQI standard:
+
+### AQI Levels & Meanings:
+- **😊 Good (0-50)**: Air quality is satisfactory, little to no risk
+- **😐 Moderate (51-100)**: Acceptable air quality, moderate health concern for sensitive individuals
+- **😷 Bad (101+)**: Unhealthy air quality, health risk for everyone
+
+### Display Format:
+- Shows only emoji + AQI number (e.g., "😐 80") 
+- Uses Noto Color Emoji font for proper emoji rendering
 
 ## 🚀 Next Steps
 

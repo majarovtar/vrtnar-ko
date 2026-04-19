@@ -8,6 +8,7 @@ class WeatherData {
   final double rainfall; // mm
   final double windSpeed; // km/h
   final int weatherCode; // WMO code
+  final double airQuality; // PM2.5 in µg/m³
   final DateTime timestamp;
 
   WeatherData({
@@ -16,6 +17,7 @@ class WeatherData {
     required this.rainfall,
     required this.windSpeed,
     required this.weatherCode,
+    required this.airQuality,
     required this.timestamp,
   });
 
@@ -58,58 +60,19 @@ class WeatherData {
     return multiplier;
   }
 
-  /// Watering needs based on weather (0.0 to 1.0)
-  /// 1.0 means plant needs heavy watering, 0.0 means no watering needed
-  double get wateringNeeds {
-    double needs = 0.5; // baseline
-
-    // Very hot weather increases water needs
-    if (temperature > 25) {
-      needs += (temperature - 25) * 0.05;
-    }
-
-    // Low humidity increases water needs
-    if (humidity < 50) {
-      needs += (50 - humidity) * 0.01;
-    }
-
-    // Rain reduces watering needs
-    if (rainfall > 0) {
-      needs -= rainfall * 0.01;
-    }
-
-    // High wind increases evaporation, increasing needs
-    if (windSpeed > 15) {
-      needs += (windSpeed - 15) * 0.02;
-    }
-
-    return needs.clamp(0.0, 1.0);
+  /// Get air quality level description based on AQI
+  /// Returns a user-friendly label (Good, Moderate, Bad)
+  String get airQualityLevel {
+    if (airQuality <= 50) return 'Good';
+    if (airQuality <= 100) return 'Moderate';
+    return 'Bad';
   }
 
-  factory WeatherData.fromJson(Map<String, dynamic> json) {
-    final current = json['current_weather'] as Map<String, dynamic>?;
-    final hourly = json['hourly'] as Map<String, dynamic>?;
-
-    final timestamp = DateTime.tryParse(current?['time']?.toString() ?? '') ?? DateTime.now();
-    final hourlyTimes = (hourly?['time'] as List<dynamic>?)?.map((e) => e?.toString()).toList() ?? [];
-    final index = hourlyTimes.indexWhere((time) => time == current?['time']?.toString());
-
-    double hourlyValue(String key) {
-      final series = hourly?[key] as List<dynamic>?;
-      if (series == null || index < 0 || index >= series.length) {
-        return 0.0;
-      }
-      return (series[index] as num?)?.toDouble() ?? 0.0;
-    }
-
-    return WeatherData(
-      temperature: (current?['temperature'] as num?)?.toDouble() ?? 0.0,
-      humidity: hourlyValue('relativehumidity_2m'),
-      rainfall: hourlyValue('precipitation'),
-      windSpeed: (current?['windspeed'] as num?)?.toDouble() ?? 0.0,
-      weatherCode: (current?['weathercode'] as num?)?.toInt() ?? 0,
-      timestamp: timestamp,
-    );
+  /// Get air quality emoji based on AQI level
+  String get airQualityEmoji {
+    if (airQuality <= 50) return '😊'; // Good - happy face
+    if (airQuality <= 100) return '😐'; // Moderate - neutral face
+    return '😷'; // Bad - mask face
   }
 
   @override
@@ -134,7 +97,8 @@ class WeatherService {
     required double longitude,
   }) async {
     try {
-      final response = await http.get(
+      // Get weather data from Open-Meteo
+      final weatherResponse = await http.get(
         Uri.parse(
           '$_baseUrl?latitude=$latitude&longitude=$longitude&current_weather=true&'
           'hourly=relativehumidity_2m,precipitation&'
@@ -142,20 +106,94 @@ class WeatherService {
         ),
       ).timeout(const Duration(seconds: 5));
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
-        return WeatherData.fromJson(data);
+      if (weatherResponse.statusCode != 200) {
+        return null;
       }
+
+      final weatherData = jsonDecode(weatherResponse.body) as Map<String, dynamic>;
+
+      // Get air quality data from WAQI
+      double airQuality = 0.0;
+      try {
+        final airQualityResponse = await http.get(
+          Uri.parse('https://api.waqi.info/feed/ljubljana/?token=demo'),
+        ).timeout(const Duration(seconds: 5));
+
+        if (airQualityResponse.statusCode == 200) {
+          final airQualityData = jsonDecode(airQualityResponse.body) as Map<String, dynamic>;
+          if (airQualityData['status'] == 'ok') {
+            // Try to get PM2.5 directly, fallback to AQI if not available
+            final iaqi = airQualityData['data']['iaqi'] as Map<String, dynamic>?;
+            airQuality = (iaqi?['pm25']?['v'] as num?)?.toDouble() ?? 
+                        (airQualityData['data']['aqi'] as num?)?.toDouble() ?? 0.0;
+          }
+        }
+      } catch (e) {
+        // Air quality fetch failed, continue with weather data only
+        print('Failed to fetch air quality: $e');
+      }
+
+      // Create WeatherData with combined data
+      final current = weatherData['current_weather'] as Map<String, dynamic>?;
+      final hourly = weatherData['hourly'] as Map<String, dynamic>?;
+      
+      final timestamp = DateTime.tryParse(current?['time']?.toString() ?? '') ?? DateTime.now();
+      final hourlyTimes = (hourly?['time'] as List<dynamic>?)?.map((e) => e?.toString()).toList() ?? [];
+      
+      // Find the closest hourly time to current weather time
+      int findClosestIndex() {
+        if (hourlyTimes.isEmpty) return -1;
+        final currentTime = DateTime.tryParse(current?['time']?.toString() ?? '');
+        if (currentTime == null) return 0;
+        
+        int closestIndex = 0;
+        Duration smallestDiff = Duration(days: 365);
+        
+        for (int i = 0; i < hourlyTimes.length; i++) {
+          final timeString = hourlyTimes[i];
+          if (timeString != null) {
+            final hourlyTime = DateTime.tryParse(timeString);
+            if (hourlyTime != null) {
+              final diff = (hourlyTime.difference(currentTime)).abs();
+              if (diff < smallestDiff) {
+                smallestDiff = diff;
+                closestIndex = i;
+              }
+            }
+          }
+        }
+        return closestIndex;
+      }
+      
+      final index = findClosestIndex();
+
+      double hourlyValue(String key) {
+        final series = hourly?[key] as List<dynamic>?;
+        if (series == null || index < 0 || index >= series.length) {
+          return 0.0;
+        }
+        return (series[index] as num?)?.toDouble() ?? 0.0;
+      }
+
+      return WeatherData(
+        temperature: (current?['temperature'] as num?)?.toDouble() ?? 0.0,
+        humidity: hourlyValue('relativehumidity_2m'),
+        rainfall: hourlyValue('precipitation'),
+        windSpeed: (current?['windspeed'] as num?)?.toDouble() ?? 0.0,
+        weatherCode: (current?['weathercode'] as num?)?.toInt() ?? 0,
+        airQuality: airQuality,
+        timestamp: timestamp,
+      );
     } catch (e) {
       print('Error fetching weather: $e');
     }
     return null;
   }
 
-  /// Get weather for a default location (currently using Paris as example)
+  /// Get weather for a default location (Ljubljana, Slovenia)
   /// In a real app, this would use device location or user settings
   Future<WeatherData?> getDefaultLocationWeather() async {
-    // Default location: Paris, France
-    return getWeather(latitude: 48.8566, longitude: 2.3522);
+    // Default location: Ljubljana, Slovenia
+    return getWeather(latitude: 46.0569, longitude: 14.5058);
   }
 }

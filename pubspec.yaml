@@ -43,6 +43,9 @@ flutter:
     - family: Press Start 2P
       fonts:
         - asset: assets/fonts/PressStart2P-Regular.ttf
+    - family: Noto Color Emoji
+      fonts:
+        - asset: assets/fonts/NotoColorEmoji-Regular.ttf
 
 flutter_launcher_icons:
   android: true

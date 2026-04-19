@@ -87,12 +87,10 @@ class _MenuWeatherSummaryState extends State<MenuWeatherSummary> {
                 'How weather affects plant growth speed',
               ),
               const SizedBox(height: 4),
-              Tooltip(
-                message: 'Watering need based on temp, humidity, rain, and wind',
-                child: Text(
-                  'Water ${(weather.wateringNeeds * 100).toStringAsFixed(0)}%',
-                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
-                ),
+              _menuRow(
+                weather.airQualityEmoji,
+                '${weather.airQuality.toStringAsFixed(0)} µg/m³',
+                'Air quality level',
               ),
             ],
           ),
@@ -106,7 +104,7 @@ class _MenuWeatherSummaryState extends State<MenuWeatherSummary> {
       padding: const EdgeInsets.only(bottom: 2),
       child: Row(
         children: [
-          Text(icon, style: const TextStyle(fontSize: 12)),
+          Text(icon, style: const TextStyle(fontSize: 12, fontFamily: 'Noto Color Emoji')),
           const SizedBox(width: 6),
           Expanded(
             child: Tooltip(
