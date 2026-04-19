@@ -1,4 +1,4 @@
-enum Seed {
+enum Seed implements SeedLike {
   grapes(1),
   cauliflower(2),
   carrot(3),
@@ -36,6 +36,12 @@ enum Seed {
   };
 
   @override
+  String get displayName => name;
+
+  @override
+  String get emoji => asCharacter;
+
+  @override
   String toString() => asCharacter;
 }
 
@@ -46,6 +52,7 @@ abstract class SeedLike {
   SeedColor get color;
   String get name;
   String get asCharacter;
+  String get seedImageAsset;
 }
 
 class CustomSeed implements SeedLike {
@@ -77,6 +84,9 @@ class CustomSeed implements SeedLike {
 
   @override
   String get name => displayName;
+
+  @override
+  String get seedImageAsset => 'assets/maja/tile000.png';
 
   @override
   int get hashCode => Object.hash(plantId, displayName);

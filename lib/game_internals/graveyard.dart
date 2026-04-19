@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'seed.dart';
 
 class DeadPlant {
-  final Seed seed;
+  final SeedLike seed;
   final String? name;
   final DateTime removedAt;
 
