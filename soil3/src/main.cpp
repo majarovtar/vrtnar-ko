@@ -15,8 +15,8 @@ const String backendUrl = String("http://") + BACKEND_IP + ":" + BACKEND_PORT + 
 #include <ArduinoJson.h>
 
 // WiFi credentials
-const char* ssid = "FRIevent";
-const char* password = "1program3R";
+const char* ssid = "WiFi";
+const char* password = "password";
 
 // Backend configuration
 const char* backendUrl = "http://10.32.242.156:5000/api/soil-humidity";
