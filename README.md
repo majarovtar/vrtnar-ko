@@ -12,6 +12,18 @@ backend that collects its readings: The sensor will alarm you when the plant nee
 Visit the Marketplace (prototype) to share and receive plant seedlings, visit the City to see your friends' gardens and cheer them on (prototype), or pay your respects to the dead plants you failed to keep alive, in the Graveyard.
 
 
+https://github.com/user-attachments/assets/16cfa0f6-fffb-4a62-9454-b5dd279d74b5
+
+https://github.com/user-attachments/assets/8d37ef11-00c2-47d8-892a-979c0ce2209e
+
+
+<img width="1470" height="749" alt="Screenshot 2026-10-22 at 15 13 57" src="https://github.com/user-attachments/assets/b1783994-a6d4-447a-b3eb-9afe850525a5" />
+
+<img width="1461" height="702" alt="Screenshot 2026-10-22 at 16 03 28" src="https://github.com/user-attachments/assets/94348bca-51ae-423d-98a1-8bceaf3bfc8e" />
+
+<img width="1470" height="744" alt="Screenshot 2026-10-22 at 13 52 36" src="https://github.com/user-attachments/assets/8c4bb16e-2196-436e-8885-882fa8899e85" />
+
+
 ## The game
 
 - **Card-based planting** — pick seeds and plant them on a board
